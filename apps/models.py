@@ -40,17 +40,16 @@ class Product(Model):
     def __str__(self):
         return self.title
 
+    @property
+    def total_sum(self):
+        return self.shopping_cost + self.price
+
 
 class Order(Model):
     class StatusType(TextChoices):
         CREATED = 'created', 'Created'
+
     product = ForeignKey('apps.Product', on_delete=CASCADE)
     user = ForeignKey('users.User', on_delete=CASCADE)
     status = CharField(max_length=30, choices=StatusType.choices, default=StatusType.CREATED)
     created_at = DateTimeField(auto_now_add=True)
-
-
-
-
-
-

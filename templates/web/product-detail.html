@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card mb-3 mt-2">
+        <div class="card-body">
+            <div class="col-lg-8 swiper-container">
+                
+            </div>
+            <div class="row">
+                <div class="col-lg-8 swiper-container" style="margin-top: 20px;">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="" class="img-main mb-3 img-fluid">
+                    {% endif %}
+
+                    <div class="row mb-5 thumbs">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 swiper-container">
+                <h5>
+                    {{ product.title }}
+                </h5>
+                <p class="fs--1">
+                <p>{{ product.description }}</p>
+
+               
+                <p>&nbsp;</p>
+
+                <p>To&#39;lovni mahsulotni qo&#39;lingizga olganda qilasiz</p>
+                
+
+                <p>O&lsquo;zbekiston bo&lsquo;ylab yetkazib berish xizmati mavjud</p>
+                
+                <h4 class="d-flex align-items-center">
+                <span class="text-warning me-2">
+                {{ product.price }} so'm
+                </span>
+                </h4>
+                <a class="btn btn-primary" href="{% url 'create_order' product.slug %}">Buyurtma berish</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,117 @@
+[
+  {
+    "model": "apps.category",
+    "pk": 2,
+    "fields": {
+      "name": "Uy uchun",
+      "slug": "uy-uchun"
+    }
+  },
+
+  {
+    "model": "apps.category",
+    "pk": 3,
+    "fields": {
+      "name": "Bolalar uchun",
+      "slug": "Bolalar-uchun"
+    }
+  },
+
+  {
+    "model": "apps.category",
+    "pk": 4,
+    "fields": {
+      "name": "Sovg'a",
+      "slug": "sovga"
+    }
+  },
+
+  {
+    "model": "apps.category",
+    "pk": 5,
+    "fields": {
+      "name": "Ayollar",
+      "slug": "ayollar"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 6,
+    "fields": {
+      "name": "Davolovchi mahsulotlar",
+      "slug": "davolovchi-mahsulotlar"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 7,
+    "fields": {
+      "name": "Erkaklar uchun",
+      "slug": "erkaklar-uchun"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 8,
+    "fields": {
+      "name": "Fitnes",
+      "slug": "fitnes"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 9,
+    "fields": {
+    "name": "Davolovchi mazlar",
+    "slug": "davolovchi-mazlar"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 10,
+    "fields": {
+    "name": "Mashina uchun",
+    "slug": "mashina-uchun"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 11,
+    "fields": {
+    "name": "Kitoblar",
+    "slug": "Kitoblar"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 12,
+    "fields": {
+    "name": "Aqlli soatlar",
+    "slug": "aqlli-soatlar"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 13,
+    "fields": {
+    "name": "Atir",
+    "slug": "atir"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 14,
+    "fields": {
+    "name": "Yangi yil mahsulotlari",
+    "slug": "yangi-yil-mahsulotlari"
+    }
+  },
+  {
+    "model": "apps.category",
+    "pk": 15,
+    "fields": {
+    "name": "Eliktronika",
+    "slug": "eliktronika"
+    }
+  }
+]

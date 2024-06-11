@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField, TextChoices, ImageField, BigIntegerField, TextField
+from django.db.models import CharField, TextChoices, ImageField, BigIntegerField
 from django_ckeditor_5.fields import CKEditor5Field
-from django_ckeditor_5.widgets import CKEditor5Widget
 
 from users.managers import UserModelManager
 
@@ -28,6 +27,3 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserModelManager()
-
-    def get_absolute_url(self):
-        return "/users/%i/" % (self.pk)

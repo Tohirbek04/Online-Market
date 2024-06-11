@@ -1,73 +1,80 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LogoutView
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, TemplateView, ListView
+from django.views.generic import DetailView, ListView, CreateView
 
-from apps.models import Category, Product, Order
-from users.models import User
-
-
-class HomeView(View):
-    def get(self, request):
-        categories = Category.objects.all()
-        products = Product.objects.all()
-        context = {
-            "categories": categories,
-            "products": products
-
-        }
-        return render(request, 'web/home.html', context)
+from apps.models import Category, Product, Order, LikeModel
 
 
-class CategoryProductView(View):
+class BaseProductListView(ListView):
+    queryset = Product.objects.all()
 
-    def get(self, request, slug):
-        category = get_object_or_404(Category, slug=slug)
-        products = category.product_set.all()
-        context = {
-            'category': category,
-            'products': products
-        }
-        return render(request, 'web/home.html', context)
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+
+
+class ProductListView(BaseProductListView):
+    template_name = 'apps/products/product-list.html'
+
+
+class ProductByCategoryListView(BaseProductListView):
+    template_name = 'apps/products/category-by-product.html'
+
+    def get_queryset(self):
+        slug = self.kwargs.get('slug')
+        qs = super().get_queryset()
+        if slug:
+            qs = qs.filter(category__slug=slug)
+        return qs
 
 
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
-    template_name = 'web/product-detail.html'
-    login_url = 'login'
+    template_name = 'apps/products/product-detail.html'
 
 
-class CreateOrderView(LoginRequiredMixin, View):
-    login_url = 'login'
+class OrderCreateView(LoginRequiredMixin, CreateView):
+    model = Order
+    fields = 'name', 'phone_number'
+    template_name = 'apps/products/product-detail.html'
+    success_url = reverse_lazy('product_list')
 
-    def get(self, request, slug):
-        product = get_object_or_404(Product, slug=slug)
-        if product:
-            new_order = Order(user=request.user, product=product)
-            new_order.save()
-            return render(request, 'web/accepted.html', {"product": product})
-        return render(request, 'errors/404.html')
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 
-class SearchProductView(ListView):
-    template_name = 'web/home.html'
-    model = Product
+class OrderListView(LoginRequiredMixin, ListView):
+    queryset = Order.objects.select_related('product')
+    template_name = 'apps/orders.html'
+    context_object_name = 'orders'
+
+
+class ClickLikeView(View):
+    def get(self, request, pk):
+        get, created = LikeModel.objects.get_or_create(user=request.user, product_id=pk)
+        if not created:
+            get.delete()
+        return redirect('product_list')
+
+
+class MarketListView(LoginRequiredMixin, ListView):
+    queryset = Product.objects.all()
+    template_name = 'apps/market.html'
     context_object_name = 'products'
 
-    def get_queryset(self):
-        title = self.request.GET.get('search', '')
-        if title:
-            object_list = self.model.objects.filter(title__icontains=title)
-            return object_list
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
 
-class OrderView(ListView):
-    model = Order
-    context_object_name = 'orders'
-    template_name = 'web/orders.html'
-
-    def get_queryset(self):
-        pass
-
-
+class CategoryMarketProductView(BaseProductListView):
+    template_name = 'apps/market.html'

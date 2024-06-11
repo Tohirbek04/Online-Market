@@ -26,8 +26,15 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('status', models.CharField(choices=[('created', 'Created')], default='created', max_length=30)),
+                ('phone_number', models.CharField(max_length=9)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
+            options={
+                'verbose_name': 'user',
+                'verbose_name_plural': 'users',
+                'abstract': False,
+                'ordering': ['created_at']
+            },
         ),
         migrations.CreateModel(
             name='Product',

@@ -1,0 +1,79 @@
+{% extends 'base/base-window.html' %}
+{% load check_like %}
+{% block content %}
+    <div class="container border-bottom-4">
+        <div class="header_tab_menu">
+            <div class="header_menu active" style="overflow: auto">
+                <a href="{% url 'product_list' %}" class="btn btn-default">Barchasi</a>
+                {% for category in categories %}
+                    <a href="{% url 'product_by_category' category.slug %}" class="btn btn-default">{{ category.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for product in object_list %}
+                <div class="mb-4 col-md-6 col-lg-4">
+                    <div class="border rounded-1 h-100 d-flex flex-column justify-content-between pb-3">
+                        <div class="overflow-hidden">
+                            <div class="position-relative rounded-top overflow-hidden"><a class="d-block" href="{% url 'product_detail' product.slug %}"><img
+                                    {% if product.image %}
+                                        class="img-fluid rounded-top" src="{{ product.image.url }}" alt=""/></a><span
+                                    {% endif %}
+                            class="badge rounded-pill bg-success position-absolute mt-2 me-2 z-index-2 top-0 end-0"></span>
+                            </div>
+                            <div class="p-3">
+                                <h5 class="fs-0"><a class="text-dark" href="{% url 'product_detail' product.slug %}">{{ product.title }}</a><br><br></h5>
+                                <p class="fs--1 mb-3">{{ product.category.name }}</p>
+                                <h5 class="fs-md-2 text-warning mb-0 d-flex align-items-center mb-3">
+                                    {{ product.price }} so'm
+                                </h5>
+                                <p class="fs--1 mb-1">Shipping Cost:
+                                    <strong>{{ product.shopping_cost }} so'm</strong></p>
+                                <p class="fs--1 mb-1">Stock: <strong
+                                        class="text-success">{{ product.stock }}</strong>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-between-center px-3">
+                            <div><span class="fa fa-star text-warning"></span><span
+                                    class="fa fa-star text-warning"></span><span
+                                    class="fa fa-star text-warning"></span><span
+                                    class="fa fa-star text-warning"></span><span
+                                    class="fa fa-star text-300"></span><span class="ms-1">(8)</span>
+                            </div>
+                            <div><a class="btn btn-sm btn-falcon-default me-2" href="#"
+                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                    title="Add to Wish List">
+                                {% if request|check_like:product.pk %}
+                                    <span class="far fa-heart" style="color: red"></span>
+                                {% else %}
+                                    <span class="far fa-heart"></span>
+                                {% endif %}
+                            </a>
+                                <a
+                                        class="btn btn-sm btn-falcon-default"
+                                        href="{% url 'product_detail' product.slug %}" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="Add to Cart"><span
+                                        class="fas fa-cart-plus"></span></a></div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-falcon-default btn-sm me-2" type="button" disabled="disabled"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="Prev"><span
+                class="fas fa-chevron-left"></span></button>
+        <a class="btn btn-sm btn-falcon-default text-primary me-2" href="#!">1</a><a
+            class="btn btn-sm btn-falcon-default me-2" href="#!!">2</a><a
+            class="btn btn-sm btn-falcon-default me-2" href="#!!!!!!!"> <span
+            class="fas fa-ellipsis-h"></span></a><a class="btn btn-sm btn-falcon-default me-2"
+                                                    href="#!!!!!">35</a>
+        <button class="btn btn-falcon-default btn-sm" type="button" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="Next"><span class="fas fa-chevron-right"></span>
+        </button>
+    </div>
+{% endblock %}

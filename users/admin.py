@@ -14,7 +14,7 @@ class UserModelAdmin(UserAdmin):
         (None, {"fields": ("password", "phone")}),
         (_("Personal info"), {"fields": ("first_name", "last_name", "email", "is_staff", "is_superuser")}),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
-        (_("My photo"), {"fields": ("show_image", "image")}),
+        (_("My photo"), {"fields": ("image",)}),
     )
     add_fieldsets = (
         (

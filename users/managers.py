@@ -8,10 +8,6 @@ class UserModelManager(UserManager):
         if not phone:
             raise ValueError("The given username must be set")
         email = self.normalize_email(email)
-
-        GlobalUserModel = apps.get_model(
-            self.model._meta.app_label, self.model._meta.object_name
-        )
         user = self.model(phone=phone, email=email, **extra_fields)
         user.password = make_password(password)
         user.save(using=self._db)

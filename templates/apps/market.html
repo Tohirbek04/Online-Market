@@ -1,0 +1,71 @@
+{% extends 'base/base-window.html' %}
+
+{% block content %}
+    <h3 class="text-center"> Hozirda sotuvda bor <br> mahsulotlar </h3>
+
+    <br>
+
+    <div class="container border-bottom-4">
+        <div class="header_tab_menu">
+            <div class="header_menu" style="overflow: auto">
+                <a href="#" class="btn btn-default"> Hammasi </a>
+                <a href="#" class="btn btn-default"> Top tovarlar </a>
+                {% for category in categories %}
+                    <a href="{% url 'product_by_category' category.slug %}"
+                       class="btn btn-default"> {{ category.name }} </a>
+                {% endfor %}
+            </div>
+            <div class="search-box" style="width: 100%;">
+                <form action="" method="GET" class="position-relative" style="width: 100%"
+                      data-bs-display="static" autocomplete="off">
+                    <input id="search-input" name="search" class="form-control search-input" type="search"
+                           placeholder="Qidiruv..." aria-label="Search"/>
+                    <span class="fas fa-search search-box-icon"></span>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for product in products %}
+            <div class="col-sm-4 p-2">
+                <div class="card">
+                    <a href="{% url 'product_detail' product.slug %}" target="_blank">
+                        {% if product.image %}
+                            <img class="card-img-top" src="{{ product.image.url }}"
+                        {% endif %}
+                                 alt="Bassen Stoykalik 220ga 150x60 1tonna 660 litr">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'product_detail' product.slug %}" target="_blank">
+                                {{ product.title }}
+                            </a>
+                        </h5>
+                        <p class="text-muted"> {{ product.price }} so'm </p>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">To'lov: <strong>60000</strong></li>
+
+                        <li class="list-group-item">Zaxirada: <strong> {{ product.count }} ta </strong>
+                        </li>
+
+                        <li class="list-group-item">Chegirma: <strong> yuq </strong>
+                        </li>
+
+                    </ul>
+                    <a href="#" class="btn bg-danger text-white mt-2">Reklama
+                        Posti</a>
+                    <button class="btn btn-primary btn_open_modal" type="button" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal" name="442">
+                        Oqim yaratish
+                    </button>
+                    <a href="#" class="btn bg-danger text-white mt-2">Batafsil</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}

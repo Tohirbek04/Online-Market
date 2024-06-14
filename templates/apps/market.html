@@ -1,71 +1,145 @@
 {% extends 'base/base-window.html' %}
 
 {% block content %}
-    <h3 class="text-center"> Hozirda sotuvda bor <br> mahsulotlar </h3>
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                 style="display: none;"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Oqim yaratish</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" action="{% url 'stream' %}" class="form-class">
+                                {% csrf_token %}
+                                <input name="product" type="hidden" id="hidden_product">
+                                <label for="id_title">Oqim nomi </label>
+                                <input type="text" name="name" class="form-control" required id="id_title">
+                                <label for="id_discount">Chegirma </label>
+                                <input type="text" name="discount" class="form-control" id="id_discount">
 
-    <br>
-
-    <div class="container border-bottom-4">
-        <div class="header_tab_menu">
-            <div class="header_menu" style="overflow: auto">
-                <a href="#" class="btn btn-default"> Hammasi </a>
-                <a href="#" class="btn btn-default"> Top tovarlar </a>
-                {% for category in categories %}
-                    <a href="{% url 'product_by_category' category.slug %}"
-                       class="btn btn-default"> {{ category.name }} </a>
-                {% endfor %}
+                                <input type="submit" class="btn btn-primary mt-4" value="Oqim yaratish">
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="search-box" style="width: 100%;">
-                <form action="" method="GET" class="position-relative" style="width: 100%"
-                      data-bs-display="static" autocomplete="off">
-                    <input id="search-input" name="search" class="form-control search-input" type="search"
-                           placeholder="Qidiruv..." aria-label="Search"/>
-                    <span class="fas fa-search search-box-icon"></span>
-                </form>
+            <div class="container">
+
+                <h3 class="text-center"> Hozirda sotuvda bor <br> mahsulotlar </h3>
+
+                <br>
+
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li class="{{ message.tags }}">
+                                {{ message|safe }}
+                                <a href="#" class="close">✖</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="container border-bottom-4">
+                    <div class="header_tab_menu">
+                        <div class="header_menu" style="overflow: auto">
+                            <a href="{% url 'market' %}" class="btn btn-default"> Hammasi </a>
+                            <a href="#" class="btn btn-default"> Top tovarlar </a>
+                            {% for category in categories %}
+                                <a href="{% url 'category_by_product_market' category.slug %}"
+                                   class="btn btn-default"> {{ category.name }} </a>
+                            {% endfor %}
+                        </div>
+                        <div class="search-box" style="width: 100%;">
+                            <form action="" method="GET" class="position-relative" style="width: 100%"
+                                  data-bs-display="static" autocomplete="off">
+                                <input id="search-input" name="search" class="form-control search-input" t ype="search"
+                                       placeholder="Qidiruv..." aria-label="Search"/>
+                                <span class="fas fa-search search-box-icon"></span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-sm-4 p-2">
+                            <div class="card">
+                                <a href="{% url 'product_detail' product.slug %}" target="_blank">
+                                    {% if product.image %}
+                                        <img class="card-img-top" src="{{ product.image.url }}"
+                                    {% endif %}
+                                             alt="Bassen Stoykalik 220ga 150x60 1tonna 660 litr">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{% url 'product_detail' product.slug %}" target="_blank">
+                                            {{ product.title }}
+                                        </a>
+                                    </h5>
+                                    <p class="text-muted"> {{ product.price }} so'm </p>
+                                </div>
+
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">To'lov: <strong>{{ product.extra_balance }}</strong>
+                                    </li>
+
+                                    <li class="list-group-item">Zaxirada: <strong> {{ product.count }} ta </strong>
+                                    </li>
+
+                                    <li class="list-group-item">Chegirma: <strong> yuq </strong>
+                                    </li>
+
+                                </ul>
+                                <a href="#" class="btn bg-danger text-white mt-2">Reklama
+                                    Posti</a>
+                                <button onclick="{% url 'stream' %}" class="btn btn-primary btn_open_modal"
+                                        type="button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal" name="{{ product.id }}">
+                                    Oqim yaratish
+                                </button>
+                                <a href="#" class="btn bg-danger text-white mt-2">Batafsil</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% for contact in page_obj %}
+                    {{ contact.full_name|upper }}<br>
+                {% endfor %}
+                <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page=1">&laquo; 1 </a>
+                <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                   href="?page={{ page_obj.previous_page_number }}">oldingisi</a>
+            {% endif %}
+            <span class="btn btn-sm btn-falcon-default text-primary me-2">
+                Page {{ page_obj.number }}
+            </span>
+            {% if page_obj.has_next %}
+                <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page={{ page_obj.next_page_number }}">keyingisi</a>
+                <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                   href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
+            {% endif %}
+        </span>
+                </div>
             </div>
         </div>
     </div>
+{% endblock %}
 
-    <div class="row">
-        {% for product in products %}
-            <div class="col-sm-4 p-2">
-                <div class="card">
-                    <a href="{% url 'product_detail' product.slug %}" target="_blank">
-                        {% if product.image %}
-                            <img class="card-img-top" src="{{ product.image.url }}"
-                        {% endif %}
-                                 alt="Bassen Stoykalik 220ga 150x60 1tonna 660 litr">
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{% url 'product_detail' product.slug %}" target="_blank">
-                                {{ product.title }}
-                            </a>
-                        </h5>
-                        <p class="text-muted"> {{ product.price }} so'm </p>
-                    </div>
-
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">To'lov: <strong>60000</strong></li>
-
-                        <li class="list-group-item">Zaxirada: <strong> {{ product.count }} ta </strong>
-                        </li>
-
-                        <li class="list-group-item">Chegirma: <strong> yuq </strong>
-                        </li>
-
-                    </ul>
-                    <a href="#" class="btn bg-danger text-white mt-2">Reklama
-                        Posti</a>
-                    <button class="btn btn-primary btn_open_modal" type="button" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal" name="442">
-                        Oqim yaratish
-                    </button>
-                    <a href="#" class="btn bg-danger text-white mt-2">Batafsil</a>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-
+{% block main_js %}
+    <script>
+        $('.btn_open_modal').on('click', function () {
+            let product = $(this).attr('name');
+            $('#hidden_product').val(product);
+        })
+    </script>
 {% endblock %}

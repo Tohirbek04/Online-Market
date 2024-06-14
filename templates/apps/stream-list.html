@@ -1,0 +1,54 @@
+{% extends 'base/base-window.html' %}
+
+{% block content %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="container">
+                <br>
+                <h3 class="text-center"> Mening havolalarim </h3><br>
+                <div class="row">
+                    {% for stream in streams %}
+                        <div class="col-sm-4">
+                            <div class="card-header"><h5>{{ stream.name }}</h5><h5>{{ stream.discount }} so'm</h5></div>
+                            <div class="card">
+                                <div class="card-body" style="position: relative;">
+                                    <div class="form-group">
+                                        <input type="text" value="http://localhost:8000/stream/{{ stream.pk }}"
+                                               readonly=""
+                                               class="ref_link form-control">
+                                    </div>
+                                    <button class="copy_ref_bn btn btn-primary"
+                                            style="float:left; margin-right:9px; margin-top: 9px;">Nusxa ko'chirish
+                                    </button>
+                                    <a href="http://localhost:8000/stream/{{ stream.pk }}" target="_blank"><i
+                                            class="fa-solid fa-square-arrow-up-right"
+                                            style="font-size: 29px; float:left;  margin-top: 9px; margin-right:9px;"
+                                            aria-hidden="true">👆</i>
+                                    </a>
+                                    <a href="#" target="_blank"><i
+                                            class="fa-brands fa-telegram"
+                                            style="font-size: 29px; float:left; color:#e52c2c; margin-top: 9px;"
+                                            aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_js %}
+    <script>
+        $(function () {
+            var availableTags = [];
+            $("#search-input").autocomplete({
+                source: availableTags
+            });
+            console.log(availableTags);
+        });
+    </script>
+{% endblock %}

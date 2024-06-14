@@ -197,4 +197,4 @@ CKEDITOR_5_CONFIGS = {
     }
 }
 
-LOGIN_URL = '/profile'
+LOGIN_URL = '/login'

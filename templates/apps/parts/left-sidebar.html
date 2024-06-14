@@ -1,0 +1,91 @@
+{% load static %}
+
+<nav class="navbar navbar-light navbar-vertical navbar-expand-xl">
+    <script>
+        var navbarStyle = localStorage.getItem("navbarStyle");
+        if (navbarStyle && navbarStyle !== 'transparent') {
+            document.querySelector('.navbar-vertical').classList.add(`navbar-${navbarStyle}`);
+        }
+    </script>
+    <div class="d-flex align-items-center">
+        <div class="toggle-icon-wrapper">
+
+            <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip"
+                    data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span
+                    class="toggle-line"></span></span></button>
+
+        </div>
+        <a class="navbar-brand" href="{% url 'product_list' %}">
+            <div class="d-flex align-items-center py-3">
+                <img class="me-2" src="{% static 'apps/assets/img/icons/spot-illustrations/falcon.png' %}"
+                     alt="" width="40"/>
+                <span class="font-sans-serif">Alijahon</span>
+            </div>
+        </a>
+    </div>
+
+
+    <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+        <div class="col-auto navbar-vertical-label">
+        </div>
+        <a class="nav-link" href="{% url 'product_list' %}" role="button" aria-expanded="false">
+            <div class="d-flex align-items-center">
+                <span class="nav-link-icon"></span>
+                <span class="nav-link-text ps-1">Bosh sahifa</span>
+            </div>
+        </a>
+
+        <a class="nav-link" href="{% url 'order_list' %}" role="button" aria-expanded="false">
+            <div class="d-flex align-items-center">
+                <span class="nav-link-icon"></span>
+                <span class="nav-link-text ps-1">Buyurtmalar</span>
+            </div>
+        </a>
+
+        <a class="nav-link" href="{% url 'like_list' %}" role="button" aria-expanded="false">
+            <div class="d-flex align-items-center">
+                <span class="nav-link-icon"></span>
+                <span class="nav-link-text ps-1">Yoqtirgan mahsulotlarim</span>
+            </div>
+        </a>
+        {% if user.is_authenticated %}
+            <a class="nav-link" href="{% url 'market' %}" role="button" aria-expanded="false">
+                <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"></span>
+                    <span class="nav-link-text ps-1">Do'kon</span>
+                </div>
+            </a>
+            <a class="nav-link" href="{% url 'stream_list' %}" role="button" aria-expanded="false">
+                <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"></span>
+                    <span class="nav-link-text ps-1">Oqim</span>
+                </div>
+            </a>
+            <a class="nav-link" href="#" role="button" aria-expanded="false">
+            <a class="nav-link" href="#" role="button" aria-expanded="false">
+                <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"></span>
+                    <span class="nav-link-text ps-1">Statistika</span>
+                </div>
+            </a>
+            <a class="nav-link" href="#" role="button" aria-expanded="false">
+                <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"></span>
+                    <span class="nav-link-text ps-1">So'rovlar</span>
+                </div>
+            </a>
+            <a class="nav-link" href="#" role="button" aria-expanded="false">
+                <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"></span>
+                    <span class="nav-link-text ps-1">Konkurs</span>
+                </div>
+            </a>
+            <a class="nav-link" href="#" role="button" aria-expanded="false">
+                <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"></span>
+                    <span class="nav-link-text ps-1">To'lov</span>
+                </div>
+            </a>
+        {% endif %}
+    </div>
+</nav>

@@ -7,17 +7,25 @@ Task
 4.5 user type larini adminlar, managerlar, operatorlar, userlar adminga chiqarish ✅
 5. like(yoqtirgan mahsulotlar) ✅
 6. profile page ✅
-8. jazzmin adminkaga ✅
-7. oqim yaratish  ❌
+8. jazzmin adminkaga
+7. oqim yaratish  ✅
 9. 42.uz dek login qilish ⭕
 
-
-
-
-
+10. http://localhost:8000/category-market/sovga qaysi kategoriyada bolsa shuni belgilab korsatish kk
+11. http://localhost:8000/product/channel4 summani oqishga oson qilish
+12. ong chap tomonda likelar sonini korsatish kk
+13. flake8, isort
+14. http://localhost:8000/stream avtomatik olish
+15. tolovlar (vaqtinchalik adminkadan balance qoshib turish [
+    1) aslida order deliveried bolsa user balance ga pul(oqim orqali sotilgandagi) qoshiladi
+    2) operator bolgan holatda (har bir operator uchun yetkazilgan tovarga 3000 som qoshish, 3000 ni adminkadan sitesettings orqali olinadi)])
+    3) tulov qilingandan sung chekni ham chiqarib berish
+16. dostavka narxi (adminkadan qoshiladi sitesettings ga)
+17.
 
 
 
 
 annotate ❓
+
 

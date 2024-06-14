@@ -22,6 +22,7 @@ class User(AbstractUser):
     telegram_id = BigIntegerField(null=True, blank=True)
     location = CharField(max_length=255, null=True, blank=True)
     about = CKEditor5Field('Text', config_name='extends', null=True, blank=True)
+
     USERNAME_FIELD = 'phone'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = []

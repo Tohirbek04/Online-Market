@@ -21,13 +21,12 @@
                                      src="{{ category.image.url }}" alt=""{% endif %} width="100">
                             </a>
                             <h6 class="mb-1">
-                                <a href="#">{{ category.name }}</a>
+                                <a href="{% url 'product_by_category' category.slug %}">{{ category.name }}</a>
                             </h6>
                             <p class="fs--2 mb-1"></p>
                         </div>
                     </div>
                 {% endfor %}
-                <h4>{{ category.name }}</h4>
             </div>
         </div>
     </div>
@@ -54,9 +53,15 @@
                                 </h5>
                                 <p class="fs--1 mb-1">Shipping Cost:
                                     <strong>{{ product.shopping_cost }} so'm</strong></p>
-                                <p class="fs--1 mb-1">Stock: <strong
-                                        class="text-success">{{ product.stock }}</strong>
-                                </p>
+                                {% if product.is_in_stock %}
+                                    <p class="fs--1 mb-1">Stock: <strong
+                                            class="text-success">avalibale</strong>
+                                    </p>
+                                {% else %}
+                                    <p class="fs--1 mb-1">Stock: <strong
+                                            class="text" style="color: red"> sold </strong>
+                                    </p>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="d-flex flex-between-center px-3">
@@ -84,19 +89,29 @@
                     </div>
                 </div>
             {% endfor %}
+            {% for contact in page_obj %}
+                {{ contact.full_name|upper }}<br>
+            {% endfor %}
+        
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page=1">&laquo; 1 </a>
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"  href="?page={{ page_obj.previous_page_number }}">oldingisi</a>
+                    {% endif %}
+        
+                    <span class="btn btn-sm btn-falcon-default text-primary me-2" >
+                            Page {{ page_obj.number }}
+                    </span>
+        
+                    {% if page_obj.has_next %}
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"  href="?page={{ page_obj.next_page_number }}">keyingisi</a>
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"  href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
         </div>
     </div>
-    <div>
-        <button class="btn btn-falcon-default btn-sm me-2" type="button" disabled="disabled"
-                data-bs-toggle="tooltip" data-bs-placement="top" title="Prev"><span
-                class="fas fa-chevron-left"></span></button>
-        <a class="btn btn-sm btn-falcon-default text-primary me-2" href="#!">1</a><a
-            class="btn btn-sm btn-falcon-default me-2" href="#!!">2</a><a
-            class="btn btn-sm btn-falcon-default me-2" href="#!!!!!!!"> <span
-            class="fas fa-ellipsis-h"></span></a><a class="btn btn-sm btn-falcon-default me-2"
-                                                    href="#!!!!!">35</a>
-        <button class="btn btn-falcon-default btn-sm" type="button" data-bs-toggle="tooltip"
-                data-bs-placement="top" title="Next"><span class="fas fa-chevron-right"></span>
-        </button>
-    </div>
+    
 {% endblock %}
+

@@ -44,16 +44,11 @@ class LoginForm(ModelForm):
         return self.user_cache
 
 
-class UserUpdateForm(UserChangeForm):
-    class Meta:
-        model = User
-        fields = 'first_name', 'last_name', 'region', 'district', 'location', 'telegram_id', 'image', 'about', 'background_image'
-
-    def save(self, commit=True):
-        return super().save(commit)
-
-
 class PasswordUpdateForm(ModelForm):
+    old_password = CharField(max_length=20, widget=PasswordInput)
+    new_password = CharField(max_length=20, widget=PasswordInput)
+    conform_password = CharField(max_length=20, widget=PasswordInput)
+
     class Meta:
         model = User
         fields = 'password',

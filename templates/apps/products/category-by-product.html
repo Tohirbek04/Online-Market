@@ -6,7 +6,8 @@
             <div class="header_menu active" style="overflow: auto">
                 <a href="{% url 'product_list' %}" class="btn btn-default">Barchasi</a>
                 {% for category in categories %}
-                    <a href="{% url 'product_by_category' category.slug %}" class="btn btn-default">{{ category.name }}</a>
+                    <a href="{% url 'product_by_category' category.slug %}"
+                       class="btn btn-default">{{ category.name }}</a>
                 {% endfor %}
             </div>
         </div>
@@ -17,14 +18,17 @@
                 <div class="mb-4 col-md-6 col-lg-4">
                     <div class="border rounded-1 h-100 d-flex flex-column justify-content-between pb-3">
                         <div class="overflow-hidden">
-                            <div class="position-relative rounded-top overflow-hidden"><a class="d-block" href="{% url 'product_detail' product.slug %}"><img
+                            <div class="position-relative rounded-top overflow-hidden"><a class="d-block"
+                                                                                          href="{% url 'product_detail' product.slug %}"><img
                                     {% if product.image %}
                                         class="img-fluid rounded-top" src="{{ product.image.url }}" alt=""/></a><span
                                     {% endif %}
                             class="badge rounded-pill bg-success position-absolute mt-2 me-2 z-index-2 top-0 end-0"></span>
                             </div>
                             <div class="p-3">
-                                <h5 class="fs-0"><a class="text-dark" href="{% url 'product_detail' product.slug %}">{{ product.title }}</a><br><br></h5>
+                                <h5 class="fs-0"><a class="text-dark"
+                                                    href="{% url 'product_detail' product.slug %}">{{ product.title }}</a><br><br>
+                                </h5>
                                 <p class="fs--1 mb-3">{{ product.category.name }}</p>
                                 <h5 class="fs-md-2 text-warning mb-0 d-flex align-items-center mb-3">
                                     {{ product.price }} so'm
@@ -63,17 +67,30 @@
             {% endfor %}
         </div>
     </div>
-    <div>
-        <button class="btn btn-falcon-default btn-sm me-2" type="button" disabled="disabled"
-                data-bs-toggle="tooltip" data-bs-placement="top" title="Prev"><span
-                class="fas fa-chevron-left"></span></button>
-        <a class="btn btn-sm btn-falcon-default text-primary me-2" href="#!">1</a><a
-            class="btn btn-sm btn-falcon-default me-2" href="#!!">2</a><a
-            class="btn btn-sm btn-falcon-default me-2" href="#!!!!!!!"> <span
-            class="fas fa-ellipsis-h"></span></a><a class="btn btn-sm btn-falcon-default me-2"
-                                                    href="#!!!!!">35</a>
-        <button class="btn btn-falcon-default btn-sm" type="button" data-bs-toggle="tooltip"
-                data-bs-placement="top" title="Next"><span class="fas fa-chevron-right"></span>
-        </button>
+    
+    {% for contact in page_obj %}
+        {{ contact.full_name|upper }}<br>
+    {% endfor %}
+
+    <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page=1">&laquo; 1 </a>
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                           href="?page={{ page_obj.previous_page_number }}">oldingisi</a>
+                    {% endif %}
+
+                    <span class="btn btn-sm btn-falcon-default text-primary me-2">
+                            Page {{ page_obj.number }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                           href="?page={{ page_obj.next_page_number }}">keyingisi</a>
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                           href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
+                    {% endif %}
+                </span>
     </div>
+
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base/base-window.html' %}
+
+{% block content %}
+    <div class="row g-0 text-center fs--1">
+        {% for like in likes %}
+            <div class="col-4 col-md-4 col-lg-3 col-xx1-2 mb-1">
+                <div class="bg-white dark__bg-1100 p-1 h-100">
+                    <a href="{% url 'product_detail' like.product.slug %}">
+                        {% if like.product.image %}
+                            <img class="img-thumbnail img-fluid  mb-3 shadow-sm"
+                                 src="{{ like.product.image.url }}" alt="" width="100">
+                        {% endif %}
+                    </a>
+                    <h6 class="mb-1">
+                        <a href="{% url 'product_detail' like.product.slug %}">{{ like.product.title }}</a>
+                    </h6>
+                    <p class="fs--2 mb-1"></p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

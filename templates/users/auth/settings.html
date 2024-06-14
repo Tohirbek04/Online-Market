@@ -5,24 +5,31 @@
         <div class="col-12">
             <div class="card mb-3 btn-reveal-trigger">
                 <div class="card-header position-relative min-vh-25 mb-8">
-                    <div class="cover-image">
-                        <div class="bg-holder rounded-3 rounded-bottom-0"
-                    </div>
-                        <input class="d-none" id="upload-cover-image" value="{{ user.background_image }}" type="file"/>
-                        <label class="cover-image-file-input" for="upload-cover-image"><span
-                                class="fas fa-camera me-2"></span><span>Change cover photo</span></label>
-                    </div>
-                    <div class="avatar avatar-5xl avatar-profile shadow-sm img-thumbnail rounded-circle">
-                        <div class="h-100 w-100 rounded-circle overflow-hidden position-relative"><img
-                                data-dz-thumbnail="data-dz-thumbnail"/>
-                            <input class="d-none" id="profile-image"  value="{{ user.image }}" type="file"/>
-                            <label class="mb-0 overlay-icon d-flex flex-center" for="profile-image"><span
-                                    class="bg-holder overlay overlay-0"></span><span
-                                    class="z-index-1 text-white dark__text-white text-center fs--1"><span
-                                    class="fas fa-camera"></span><span class="d-block">Update</span></span>
+                    <form method="post" action="{% url 'image_update' %}"  enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="cover-image">
+                            {% if user.background_image %}
+                                <div class="bg-holder rounded-3 rounded-bottom-0" style="background-image:url({{ user.background_image.url }});"></div>
+                            {% endif %}
+                            <input class="d-none" id="upload-cover-image" name="background_image" type="file" />
+                            <label class="cover-image-file-input" for="upload-cover-image"><span
+                                    class="fas fa-camera me-2"></span><span>Change cover photo</span>
                             </label>
                         </div>
-                    </div>
+                        <div class="avatar avatar-5xl avatar-profile shadow-sm img-thumbnail rounded-circle">
+                            <div class="h-100 w-100 rounded-circle overflow-hidden position-relative">
+                                {% if user.image %}
+                                    <img src="{{ user.image.url }}" data-dz-thumbnail="data-dz-thumbnail"/>
+                                {% endif %}
+                                <input class="d-none" id="profile-image"  name="image" type="file"/>
+                                <label class="mb-0 overlay-icon d-flex flex-center" for="profile-image"><span
+                                        class="bg-holder overlay overlay-0"></span><span
+                                        class="z-index-1 text-white dark__text-white text-center fs--1"><span
+                                        class="fas fa-camera"></span><button class="d-block">Update</button></span>
+                                </label>
+                            </div>
+                        </div>
+                  </form>
                 </div>
             </div>
         </div>
@@ -35,7 +42,7 @@
                     <h5 class="mb-0">Sozlamalar</h5>
                 </div>
                 <div class="card-body bg-light">
-                    <form class="row g-3" action="{% url 'profile' %}" method="post">
+                    <form class="row g-3" action="{% url 'profile_update' %}" method="post">
                         {% csrf_token %}
                         <div class="col-lg-6">
                             Ismi
@@ -49,39 +56,27 @@
                         </div>
                         <div class="col-lg-6">
                             Viloyat
+                            <input type="text" name="region" class="form-control" value="{{ user.region }}"
+                                   maxlength="40" id="id_last_name">
                         </div>
-
                         <div class="col-lg-6">
-                            Shahar/Tuman
-                            <input type="text" name="district" class="form-control" maxlength="100" id="id_city">
-
+                            Tuman/Shahar
+                            <input type="text" name="district" class="form-control" value="{{ user.district }}"
+                                   maxlength="40" id="id_last_name">
                         </div>
-
-                        <div class="col-lg-6">
-                            Manzil
-                            <input type="text" name="location" class="form-control" maxlength="200" id="id_location">
-
-                        </div>
-
-                        <div class="col-lg-6">
-                            Telegram id
-                            <input type="text" name="telegram_id" class="form-control" maxlength="200"
-                                   id="id_telegram_id">
-
-                        </div>
-
                         <div class="col-lg-6">
                             Siz haqingizda
-                            <textarea name="about" cols="40" rows="10" class="form-control" maxlength="399"
-                                      id="id_description"></textarea>
+                            <textarea name="about" cols="40" rows="10" class="form-control" 
+                                      maxlength="399" id="id_description">
+                            </textarea>
                         </div>
+
                         <div class="col-12 d-flex justify-content-end">
                             <button class="btn btn-primary" type="submit">Saqlash</button>
                         </div>
                     </form>
                 </div>
             </div>
-
 
         </div>
         <div class="col-lg-4 ps-lg-2">
@@ -91,11 +86,11 @@
                         <h5 class="mb-0">Parolni o'zgartirish</h5>
                     </div>
                     <div class="card-body bg-light">
-                        <form method="post">
+                        <form method="post" action="#">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label class="form-label" for="old-password">Oldingi parol</label>
-                                <input class="form-control" name="password" id="old-password" type="password">
+                                <input class="form-control" name="old_password" id="old-password" type="password">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="new-password">Yangi parol</label>

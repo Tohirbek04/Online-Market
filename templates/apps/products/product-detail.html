@@ -1,4 +1,4 @@
-{% extends 'base/base-window.html' %}
+{% extends 'apps/base-window.html' %}
 
 {% block content %}
     <div class="card mb-3 mt-2">
@@ -17,6 +17,7 @@
                     </div>
                     <span style="padding-bottom: 100px;"></span>
                      <input hidden name="product"  value="{{ product.pk }}" id="formGroupNameInput" type="text"/>
+                     <input hidden name="stream"  value="{{ stream.pk }}" id="formGroupNameInput" type="text"/>
                     <div class="d-grid gap-2 col-6 mx-auto" style="margin-top: 20px;">
                         <button class="btn btn-primary" type="submit">Buyurtma berish</button>
                     </div>

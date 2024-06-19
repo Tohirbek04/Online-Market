@@ -38,11 +38,16 @@
             </div>
         </li>
         <li class="nav-item">
-            <a class="nav-link px-0 notification-indicator notification-indicator-warning notification-indicator-fill fa-icon-wait"
-               href="{% url 'market' %}"><span class="fas fa-shopping-cart" data-fa-transform="shrink-7"
-                                               style="font-size: 33px;"></span>
-                <span class="notification-indicator-number">0</span>
+            <a href="{% url 'like_list' %}" style="text-decoration: none; color: inherit;">
+                <span style="position: relative;">
+                        <i class="fas fa-heart" style="color: red; font-size: 20px;"></i>
+                    <span class="badge"
+                        style="position: absolute; top: -20px; right: -13px; background-color: #FF5733; color: white; 
+                        border-radius: 50%; padding: 2px 6px; font-size: 12px;">{{ user.likemodel_set.all.count }}
+                    </span>
+                </span>
             </a>
+
 
         </li>
         <li class="nav-item dropdown">

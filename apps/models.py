@@ -1,5 +1,6 @@
-from django.db.models import Model, CharField, SlugField, FloatField, ImageField, ForeignKey, \
-    CASCADE, TextChoices, IntegerField, DateTimeField, SET_NULL
+from django.db.models import (CASCADE, SET_NULL, CharField, DateTimeField,
+                              ForeignKey, ImageField, IntegerField,
+                              Model, SlugField, TextChoices)
 from django.template.defaultfilters import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -20,13 +21,17 @@ class Category(Model):
 class Product(Model):
     title = CharField(max_length=255)
     slug = SlugField(max_length=255, editable=False)
-    price = FloatField(db_default=0.0)
+    price = IntegerField(db_default=0)
     description = CKEditor5Field('Text', config_name='extends')
     shopping_cost = IntegerField()
     category = ForeignKey('apps.Category', CASCADE)
     image = ImageField(upload_to='product/images')
     count = IntegerField(db_default=0)
     extra_balance = IntegerField(db_default=0)
+    created_at = DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -39,15 +44,10 @@ class Product(Model):
     def is_in_stock(self):
         return self.count > 0
 
-    @property
-    def total_sum(self):
-        return self.shopping_cost + self.price
-
 
 class Order(Model):
     class Status(TextChoices):
         NEW = 'new', 'New',
-        VISIT = 'visit', 'Vist',
         READY = 'ready', 'Ready',
         DELIVERY = 'delivery', 'Delivery',
         DELIVERED = 'delivered', 'Delivered',
@@ -63,7 +63,7 @@ class Order(Model):
     name = CharField(max_length=30)
     description = CKEditor5Field(null=True, blank=True, config_name='extends')
     created_at = DateTimeField(auto_now_add=True)
-    stream = ForeignKey('apps.Stream', null=True, blank=True, on_delete=SET_NULL)
+    stream = ForeignKey('apps.Stream', null=True, blank=True, on_delete=SET_NULL, related_name='order')
     courier = ForeignKey('users.User', null=True, blank=True, on_delete=SET_NULL, related_name='courier')
     operator = ForeignKey('users.User', null=True, blank=True, on_delete=SET_NULL, related_name='operator')
 
@@ -80,7 +80,7 @@ class LikeModel(Model):
 class Stream(Model):
     name = CharField(max_length=20)
     discount = IntegerField(default=0)
-    owner = ForeignKey('users.User', CASCADE, related_name='streams')
-    product = ForeignKey('apps.Product', CASCADE, related_name='streams')
-
+    owner = ForeignKey('users.User', CASCADE, related_name='owner')
+    product = ForeignKey('apps.Product', CASCADE, related_name='product')
+    views_count = IntegerField(db_default=0)
 

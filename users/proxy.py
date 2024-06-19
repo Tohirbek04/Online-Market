@@ -1,4 +1,5 @@
-from users.managers import OperatorProxyManager, ClientProxyManager, ManagerProxyManager, AdminProxyManager
+from users.managers import (AdminProxyManager, ClientProxyManager,
+                            ManagerProxyManager, OperatorProxyManager)
 from users.models import User
 
 

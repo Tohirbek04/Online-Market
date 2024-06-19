@@ -1,4 +1,4 @@
-{% extends 'base/base-window.html' %}
+{% extends 'apps/base-window.html' %}
 
 {% block content %}
     <div class="card mb-3">
@@ -52,8 +52,9 @@
                             <a href="{% url 'market' %}" class="btn btn-default"> Hammasi </a>
                             <a href="#" class="btn btn-default"> Top tovarlar </a>
                             {% for category in categories %}
-                                <a href="{% url 'category_by_product_market' category.slug %}"
-                                   class="btn btn-default"> {{ category.name }} </a>
+                                   <a href="{% url 'category_by_product_market' category.slug %}"
+                                       class="btn btn-default"> {{ category.name }}
+                                   </a>
                             {% endfor %}
                         </div>
                         <div class="search-box" style="width: 100%;">
@@ -105,7 +106,7 @@
                                         data-bs-target="#exampleModal" name="{{ product.id }}">
                                     Oqim yaratish
                                 </button>
-                                <a href="#" class="btn bg-danger text-white mt-2">Batafsil</a>
+                                <a href="{% url 'product_stats' product.slug %}" class="btn bg-danger text-white mt-2">Batafsil</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -114,21 +115,21 @@
                     {{ contact.full_name|upper }}<br>
                 {% endfor %}
                 <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page=1">&laquo; 1 </a>
-                <a class="btn btn-sm btn-falcon-default text-primary me-2"
-                   href="?page={{ page_obj.previous_page_number }}">oldingisi</a>
-            {% endif %}
-            <span class="btn btn-sm btn-falcon-default text-primary me-2">
-                Page {{ page_obj.number }}
-            </span>
-            {% if page_obj.has_next %}
-                <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page={{ page_obj.next_page_number }}">keyingisi</a>
-                <a class="btn btn-sm btn-falcon-default text-primary me-2"
-                   href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
-            {% endif %}
-        </span>
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page=1">&laquo; 1 </a>
+                            <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                               href="?page={{ page_obj.previous_page_number }}">oldingisi</a>
+                        {% endif %}
+                        <span class="btn btn-sm btn-falcon-default text-primary me-2">
+                            Page {{ page_obj.number }}
+                        </span>
+                        {% if page_obj.has_next %}
+                            <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page={{ page_obj.next_page_number }}">keyingisi</a>
+                            <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                               href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
+                        {% endif %}
+                    </span>
                 </div>
             </div>
         </div>

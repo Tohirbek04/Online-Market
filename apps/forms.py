@@ -10,7 +10,7 @@ from apps.models import Order, Stream
 class OrderCreateModelForm(ModelForm):
     class Meta:
         model = Order
-        fields = 'phone_number', 'name', 'product'
+        fields = 'phone_number', 'name', 'product', 'stream'
 
     def clean_phone_number(self):
         phone = self.cleaned_data.get('phone_number', )

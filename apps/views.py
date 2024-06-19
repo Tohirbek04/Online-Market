@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count, Q
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, ListView, FormView, CreateView
+from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView
 
 from apps.forms import OrderCreateModelForm, StreamCreateModelForm
-from apps.models import Category, Product, Order, LikeModel, Stream
+from apps.models import Category, LikeModel, Order, Product, Stream
 
 
 class BaseProductListView(ListView):
@@ -50,7 +51,8 @@ class OrderCreateView(FormView):
 
     def form_valid(self, form):
         order = form.save(commit=False)
-        order.user = self.request.user
+        if self.request.user.id:
+            order.user = self.request.user
         order.save()
         return redirect('status_success', order.product_id)
 
@@ -110,11 +112,15 @@ class CategoryMarketProductView(MarketListView):
         return qs
 
 
-class StreamCreateView(LoginRequiredMixin, CreateView):
+class StreamCreateListView(LoginRequiredMixin, CreateView, ListView):
     model = Stream
-    template_name = 'apps/market.html'
     form_class = StreamCreateModelForm
     success_url = reverse_lazy('product_list')
+
+    def get_template_names(self):
+        if self.request.method == "POST":
+            return 'apps/market.html'
+        return 'apps/stream-list.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -130,11 +136,6 @@ class StreamCreateView(LoginRequiredMixin, CreateView):
     def form_invalid(self, form):
         return redirect('market')
 
-
-class StreamListView(LoginRequiredMixin, ListView):
-    template_name = 'apps/stream-list.html'
-    model = Stream
-
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['streams'] = self.model.objects.filter(owner=self.request.user)
@@ -144,12 +145,57 @@ class StreamListView(LoginRequiredMixin, ListView):
 class StreamDetailView(DetailView):
     template_name = 'apps/products/product-detail.html'
     model = Stream
+    context_object_name = 'stream'
 
     def get_context_data(self, **kwargs):
-        pk = self.kwargs.get(self.pk_url_kwarg)
         context = super().get_context_data(**kwargs)
         stream = self.object
+        stream.views_count += 1
+        stream.save()
         product = Product.objects.get(pk=stream.product.pk)
         context['price'] = product.price - stream.discount
         context['product'] = product
         return context
+
+
+class ProductStatisticsDetailView(DetailView):
+    model = Product
+    template_name = 'apps/products/product-stats.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        slug = self.kwargs.get(self.slug_url_kwarg)
+        product = self.model.objects.get(slug=slug)
+        context = super().get_context_data(**kwargs)
+        context['total_stream_count'] = Stream.objects.filter(product_id=product.id).count()
+        context['owner_stream_count'] = Stream.objects.filter(product_id=product.id, owner=self.request.user).count()
+        return context
+
+
+class StatisticsView(ListView):
+    template_name = 'apps/statistics.html'
+    context_object_name = 'streams'
+
+    def get_queryset(self):
+        queryset = (Stream.objects.select_related('product').prefetch_related('order').annotate(
+            new_count=Count('order', filter=Q(order__status=Order.Status.NEW)),
+            ready_count=Count('order', filter=Q(order__status=Order.Status.READY)),
+            delivery_count=Count('order', filter=Q(order__status=Order.Status.DELIVERY)),
+            delivered_count=Count('order', filter=Q(order__status=Order.Status.DELIVERED)),
+            cancelled_count=Count('order', Q(order__status=Order.Status.CANCELLED)),
+            archived_count=Count('order', filter=Q(order__status=Order.Status.ARCHIVED)),
+            missed_call_count=Count('order', filter=Q(order__status=Order.Status.MISSED_CALL))
+        )).values(
+            'product__title',
+            'views_count',
+            'name',
+            'owner__id',
+            'new_count',
+            'ready_count',
+            'delivery_count',
+            'delivered_count',
+            'cancelled_count',
+            'archived_count',
+            'missed_call_count')
+        return queryset
+

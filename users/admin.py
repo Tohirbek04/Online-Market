@@ -4,7 +4,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
 from users.models import User
-from users.proxy import OperatorProxyModel, ManagerProxyModel, ClientProxyModel, AdminProxyModel
+from users.proxy import (AdminProxyModel, ClientProxyModel, ManagerProxyModel,
+                         OperatorProxyModel)
 
 
 class UserModelAdmin(UserAdmin):

@@ -1,8 +1,10 @@
-from django.contrib.auth import authenticate
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.core.exceptions import ValidationError
-from django.forms import CharField, PasswordInput, ModelForm
 import re
+
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.core.exceptions import ValidationError
+from django.forms import CharField, ModelForm, PasswordInput
+
 from users.models import User
 
 

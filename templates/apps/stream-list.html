@@ -1,4 +1,4 @@
-{% extends 'base/base-window.html' %}
+{% extends 'apps/base-window.html' %}
 
 {% block content %}
     <div class="card mb-3">
@@ -13,7 +13,7 @@
                             <div class="card">
                                 <div class="card-body" style="position: relative;">
                                     <div class="form-group">
-                                        <input type="text" value="http://localhost:8000/stream/{{ stream.pk }}"
+                                        <input type="text" value="http://localhost:8000{% url 'stream_detail' stream.pk %}"
                                                readonly=""
                                                class="ref_link form-control">
                                     </div>
@@ -44,9 +44,10 @@
 {% block stream_js %}
     <script>
         $(function () {
-            var availableTags = [];
+            var availableTags = [
+            ];
             $("#search-input").autocomplete({
-                source: availableTags
+            source: availableTags
             });
             console.log(availableTags);
         });

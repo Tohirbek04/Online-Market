@@ -1,8 +1,9 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path
 
-from users.views import (UserLoginView, RegisterView, SettingsTemplateView, ProfileUpdateView, PasswordUpdateView,
-                         ImageUpdateView, ProfileTemplateView)
+from users.views import (ImageUpdateView, PasswordUpdateView,
+                         ProfileTemplateView, ProfileUpdateView, RegisterView,
+                         SettingsTemplateView, UserLoginView)
 
 urlpatterns = [
     path('register', RegisterView.as_view(), name='register'),

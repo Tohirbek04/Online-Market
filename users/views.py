@@ -37,32 +37,6 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
-class PasswordUpdateView(UpdateView):
-    model = User
-    template_name = 'users/auth/settings.html'
-    # fields = 'password',
-    form_class = PasswordUpdateForm
-
-    def get_form_class(self):
-        old_password = self.request.POST.get('old_password')
-        new_password = self.request.POST.get('new_password')
-        conform_password = self.request.POST.get('conform_password')
-        user = self.request.user
-        if user.check_password(old_password) and new_password == conform_password:
-            pass
-        # user = self.model.objects.get(password=old_password, user=self.request.user)
-        # if user:
-        #     if new_password :
-        #         return new_password
-
-    def form_valid(self, form):
-        self.object = form.save()
-        return super().form_valid(form)
-
-    def get_object(self, queryset=None):
-        return self.request.user
-
-
 class ImageUpdateView(UpdateView):
     model = User
     fields = 'image', 'background_image'

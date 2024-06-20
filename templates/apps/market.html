@@ -1,5 +1,14 @@
 {% extends 'apps/base-window.html' %}
-
+{% load humanize %}
+{% block style %}
+    <style>
+        .category-link.selected {
+            background-color: blue; /* Dark Red */
+            color: #fff;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <div class="card mb-3">
         <div class="card-body">
@@ -50,17 +59,17 @@
                     <div class="header_tab_menu">
                         <div class="header_menu" style="overflow: auto">
                             <a href="{% url 'market' %}" class="btn btn-default"> Hammasi </a>
-                            <a href="#" class="btn btn-default"> Top tovarlar </a>
+                            <a href="{% url 'top_product' %}" class="btn btn-default"> Top tovarlar </a>
                             {% for category in categories %}
-                                   <a href="{% url 'category_by_product_market' category.slug %}"
-                                       class="btn btn-default"> {{ category.name }}
-                                   </a>
+                                <a href="{% url 'category_by_product_market' category.slug %}"
+                                   class="btn btn-default"> {{ category.name }}
+                                </a>
                             {% endfor %}
                         </div>
                         <div class="search-box" style="width: 100%;">
                             <form action="" method="GET" class="position-relative" style="width: 100%"
                                   data-bs-display="static" autocomplete="off">
-                                <input id="search-input" name="search" class="form-control search-input" t ype="search"
+                                <input id="search-input" name="search" class="form-control search-input" type="search"
                                        placeholder="Qidiruv..." aria-label="Search"/>
                                 <span class="fas fa-search search-box-icon"></span>
                             </form>
@@ -75,8 +84,7 @@
                                 <a href="{% url 'product_detail' product.slug %}" target="_blank">
                                     {% if product.image %}
                                         <img class="card-img-top" src="{{ product.image.url }}"
-                                    {% endif %}
-                                             alt="Bassen Stoykalik 220ga 150x60 1tonna 660 litr">
+                                    {% endif %}alt="{{ product.title }}">
                                 </a>
                                 <div class="card-body">
                                     <h5 class="card-title">
@@ -84,11 +92,12 @@
                                             {{ product.title }}
                                         </a>
                                     </h5>
-                                    <p class="text-muted"> {{ product.price }} so'm </p>
+                                    <p class="text-muted"> {{ product.price|intcomma }} so'm </p>
                                 </div>
 
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">To'lov: <strong>{{ product.extra_balance }}</strong>
+                                    <li class="list-group-item">To'lov:
+                                        <strong>{{ product.extra_balance|intcomma }}</strong>
                                     </li>
 
                                     <li class="list-group-item">Zaxirada: <strong> {{ product.count }} ta </strong>
@@ -111,9 +120,9 @@
                         </div>
                     {% endfor %}
                 </div>
-                {% for contact in page_obj %}
-                    {{ contact.full_name|upper }}<br>
-                {% endfor %}
+{#                {% for contact in page_obj %}#}
+{#                    {{ contact.full_name|upper }}<br>#}
+{#                {% endfor %}#}
                 <div class="pagination">
                     <span class="step-links">
                         {% if page_obj.has_previous %}
@@ -125,7 +134,8 @@
                             Page {{ page_obj.number }}
                         </span>
                         {% if page_obj.has_next %}
-                            <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page={{ page_obj.next_page_number }}">keyingisi</a>
+                            <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                               href="?page={{ page_obj.next_page_number }}">keyingisi</a>
                             <a class="btn btn-sm btn-falcon-default text-primary me-2"
                                href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
                         {% endif %}
@@ -141,6 +151,15 @@
         $('.btn_open_modal').on('click', function () {
             let product = $(this).attr('name');
             $('#hidden_product').val(product);
+        })
+    </script>
+{% endblock %}
+
+{% block category_click_js %}
+    <script>
+        let link = document.querySelector(".btn-default")
+        link.addEventListener('click', function () {
+            link.style.background = "red"
         })
     </script>
 {% endblock %}

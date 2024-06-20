@@ -19,7 +19,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.apps.AppsConfig',
     'django_ckeditor_5',
-    'users'
+    'users',
+    'django.contrib.humanize',
+
 ]
 
 MIDDLEWARE = [

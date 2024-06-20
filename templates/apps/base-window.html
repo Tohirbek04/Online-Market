@@ -52,6 +52,8 @@
             userLinkRTL.setAttribute('disabled', true);
         }
     </script>
+    {% block style %}
+    {% endblock %}
 </head>
 <body>
 <main class="main" id="top">
@@ -103,9 +105,13 @@
     $('#messages-modal').modal('show');
 </script>
 
+
+
+
+{% block click_btn_js %}{% endblock %}
 {% block main_js %}{% endblock %}
 {% block stream_js %}{% endblock %}
-{% block category_click_js %}{% endblock %}
+{% block format_number_js %}{% endblock %}
 </body>
 </html>
 

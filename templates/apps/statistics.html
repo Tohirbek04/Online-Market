@@ -7,11 +7,11 @@
             <div class="container border-bottom-4">
                 <div class="header_tab_menu">
                     <div class="header_menu" style="overflow: auto">
-                        <a href="/admin_page/stats?period=today" class="btn btn-default">Bugun</a>
-                        <a href="/admin_page/stats?period=last_day" class="btn btn-default">Kechagi</a>
-                        <a href="/admin_page/stats?period=wekly" class="btn btn-default">Haftalik</a>
-                        <a href="/admin_page/stats?period=monthly" class="btn btn-default">Oylik</a>
-                        <a href="/admin_page/stats?period=all" class="btn btn-default">Hammasi</a>
+                        <a href="{% url 'statistics' %}?period=today" class="btn btn-default">Bugun</a>
+                        <a href="{% url 'statistics' %}?period=last_day" class="btn btn-default">Kechagi</a>
+                        <a href="{% url 'statistics' %}?period=weekly" class="btn btn-default">Haftalik</a>
+                        <a href="{% url 'statistics' %}?period=monthly" class="btn btn-default">Oylik</a>
+                        <a href="{% url 'statistics' %}?period=all" class="btn btn-default">Hammasi</a>
                     </div>
                 </div>
             </div>
@@ -31,6 +31,18 @@
                         <th scope="col">Bekor qilindi</th>
                         <th scope="col">Arxivlandi</th>
                     </tr>
+                    <tr>
+                        <th scope="col">Jami</th>
+                        <th scope="col"></th>
+                        <th scope="col">{{ summa_views_count }}</th>
+                        <th scope="col">{{ summa_new_count }}</th>
+                        <th scope="col">{{ summa_ready_count }}</th>
+                        <th scope="col">{{ summa_delivery_count }}</th>
+                        <th scope="col">{{summa_delivered_count }}</th>
+                        <th scope="col">{{summa_missed_call_count }}</th>
+                        <th scope="col">{{ summa_cancelled_count }}</th>
+                        <th scope="col">{{ summa_archived_count }}</th>
+                    </tr>
                     {% for stream in  streams %}
                         <tr>
                             <th>{{ stream.name }}</th>
@@ -45,6 +57,18 @@
                             <td>{{ stream.archived_count }}</td>
                         </tr>
                     {% endfor %}
+                <tr>
+                        <th scope="col">Jami</th>
+                        <th scope="col"></th>
+                        <th scope="col">{{ summa_views_count }}</th>
+                        <th scope="col">{{ summa_new_count }}</th>
+                        <th scope="col">{{ summa_ready_count }}</th>
+                        <th scope="col">{{ summa_delivery_count }}</th>
+                        <th scope="col">{{summa_delivered_count }}</th>
+                        <th scope="col">{{summa_missed_call_count }}</th>
+                        <th scope="col">{{ summa_cancelled_count }}</th>
+                        <th scope="col">{{ summa_archived_count }}</th>
+                    </tr>
                     
                 </table>
             </div>

@@ -15,26 +15,27 @@ Task
 12. ong chap tomonda likelar sonini korsatish kk ✅
 14. http://localhost:8000/stream avtomatik olish ✅
 13. flake8, isort ✅
-17. product statatistikasi ✅
+17. product statatistikasi marketda batafsilga chiqarish ✅
 18. Order statuslarini adminkada chiqarish ✅
 19. Statistika ✅
-.
-20. Konkurs
+10. http://localhost:8000/category-market/sovga qaysi kategoriyada bolsa shuni belgilab korsatish kk ❌
+11. http://localhost:8000/product/channel4 summani oqishga oson qilish  intcomma ✅
+21 top tovarlar ✅
+
+20. Konkurs ⭕
 
 
 
 
 
 
-10. http://localhost:8000/category-market/sovga qaysi kategoriyada bolsa shuni belgilab korsatish kk
-11. http://localhost:8000/product/channel4 summani oqishga oson qilish
 15. tolovlar (vaqtinchalik adminkadan balance qoshib turish [
     1) aslida order deliveried bolsa user balance ga pul(oqim orqali sotilgandagi) qoshiladi
     2) operator bolgan holatda (har bir operator uchun yetkazilgan tovarga 3000 som qoshish, 3000 ni adminkadan sitesettings orqali olinadi)])
     3) tulov qilingandan sung chekni ham chiqarib berish
 16. dostavka narxi (adminkadan qoshiladi sitesettings ga)
 
-
+22 i18
 
 
 Prefetch() ❓

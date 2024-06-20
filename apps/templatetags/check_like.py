@@ -7,7 +7,5 @@ register = Library()
 
 @register.filter()
 def check_like(request, pk) -> bool:
-    if not request.user.is_anonymous:
+    if request.user.is_authenticated:
         return LikeModel.objects.filter(user=request.user, product_id=pk).exists()
-    else:
-        pass

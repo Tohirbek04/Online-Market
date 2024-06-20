@@ -1,5 +1,6 @@
 {% extends 'apps/base-window.html' %}
 {% load check_like %}
+{% load humanize %}
 {% block content %}
     <div class="card mt-2 mb-2">
         <div class="card-header bg-light">
@@ -49,7 +50,7 @@
                                 </h5>
                                 <p class="fs--1 mb-3">{{ product.category.name }}</p>
                                 <h5 class="fs-md-2 text-warning mb-0 d-flex align-items-center mb-3">
-                                    {{ product.price }} so'm
+                                    {{ product.price|intcomma }} so'm
                                 </h5>
                                 <p class="fs--1 mb-1">Shipping Cost:
                                     <strong>{{ product.shopping_cost }} so'm</strong></p>
@@ -119,4 +120,5 @@
     </div>
     
 {% endblock %}
+
 

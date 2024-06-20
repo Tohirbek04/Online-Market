@@ -18,8 +18,7 @@
                 <div class="mb-4 col-md-6 col-lg-4">
                     <div class="border rounded-1 h-100 d-flex flex-column justify-content-between pb-3">
                         <div class="overflow-hidden">
-                            <div class="position-relative rounded-top overflow-hidden"><a class="d-block"
-                                                                                          href="{% url 'product_detail' product.slug %}"><img
+                            <div class="position-relative rounded-top overflow-hidden"><a class="d-block" href="{% url 'product_detail' product.slug %}"><img
                                     {% if product.image %}
                                         class="img-fluid rounded-top" src="{{ product.image.url }}" alt=""/></a><span
                                     {% endif %}
@@ -47,27 +46,30 @@
                                     class="fa fa-star text-warning"></span><span
                                     class="fa fa-star text-300"></span><span class="ms-1">(8)</span>
                             </div>
-                            <div><a class="btn btn-sm btn-falcon-default me-2" href="#"
-                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="Add to Wish List">
-                                {% if request|check_like:product.pk %}
-                                    <span class="far fa-heart" style="color: red"></span>
-                                {% else %}
-                                    <span class="far fa-heart"></span>
-                                {% endif %}
-                            </a>
-                                <a
+                            <div>
+                                <a class="btn btn-sm btn-falcon-default me-2" href="{% url 'click_like' product.pk %}">
+                                    <span style="position: relative;">
+                                        {% if request|check_like:product.pk %}
+                                            <i class="fas fa-heart" style="color: red; margin-left: 10px; font-size: 15px;"></i>
+                                        {% else %}
+                                            <i class="fas fa-heart" style="color: white; margin-left: 10px; font-size: 15px;"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                                <a 
                                         class="btn btn-sm btn-falcon-default"
                                         href="{% url 'product_detail' product.slug %}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="Add to Cart"><span
-                                        class="fas fa-cart-plus"></span></a></div>
+                                        class="fas fa-cart-plus"></span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
-    
+
     {% for contact in page_obj %}
         {{ contact.full_name|upper }}<br>
     {% endfor %}

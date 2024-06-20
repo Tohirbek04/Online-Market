@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q
-from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Count, Q, Sum
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import View
-from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView
+from django.views.generic import CreateView, DetailView, FormView, ListView
 
 from apps.forms import OrderCreateModelForm, StreamCreateModelForm
 from apps.models import Category, LikeModel, Order, Product, Stream
@@ -51,7 +54,7 @@ class OrderCreateView(FormView):
 
     def form_valid(self, form):
         order = form.save(commit=False)
-        if self.request.user.id:
+        if self.request.user.is_authenticated:
             order.user = self.request.user
         order.save()
         return redirect('status_success', order.product_id)
@@ -63,8 +66,7 @@ class OrderListView(LoginRequiredMixin, ListView):
     context_object_name = 'orders'
 
     def get_queryset(self):
-        qs = self.queryset.filter(user=self.request.user)
-        return qs
+        return self.queryset.filter(user=self.request.user)
 
 
 class OrderSuccessDetailView(DetailView):
@@ -75,9 +77,9 @@ class OrderSuccessDetailView(DetailView):
 
 class ClickLikeView(View):
     def get(self, request, pk):
-        get, created = LikeModel.objects.get_or_create(user=request.user, product_id=pk)
+        obj, created = LikeModel.objects.get_or_create(user=request.user, product_id=pk)
         if not created:
-            get.delete()
+            obj.delete()
         return redirect('product_list')
 
 
@@ -87,8 +89,7 @@ class LikeListView(ListView):
     context_object_name = 'likes'
 
     def get_queryset(self):
-        queryset = self.queryset.filter(user=self.request.user)
-        return queryset
+        return self.queryset.filter(user=self.request.user)
 
 
 class MarketListView(LoginRequiredMixin, ListView):
@@ -104,6 +105,7 @@ class MarketListView(LoginRequiredMixin, ListView):
 
 
 class CategoryMarketProductView(MarketListView):
+
     def get_queryset(self):
         slug = self.kwargs.get('slug')
         qs = super().get_queryset()
@@ -173,29 +175,113 @@ class ProductStatisticsDetailView(DetailView):
 
 
 class StatisticsView(ListView):
+    model = Stream
     template_name = 'apps/statistics.html'
     context_object_name = 'streams'
 
     def get_queryset(self):
-        queryset = (Stream.objects.select_related('product').prefetch_related('order').annotate(
-            new_count=Count('order', filter=Q(order__status=Order.Status.NEW)),
-            ready_count=Count('order', filter=Q(order__status=Order.Status.READY)),
-            delivery_count=Count('order', filter=Q(order__status=Order.Status.DELIVERY)),
-            delivered_count=Count('order', filter=Q(order__status=Order.Status.DELIVERED)),
-            cancelled_count=Count('order', Q(order__status=Order.Status.CANCELLED)),
-            archived_count=Count('order', filter=Q(order__status=Order.Status.ARCHIVED)),
-            missed_call_count=Count('order', filter=Q(order__status=Order.Status.MISSED_CALL))
-        )).values(
-            'product__title',
-            'views_count',
-            'name',
-            'owner__id',
-            'new_count',
-            'ready_count',
-            'delivery_count',
-            'delivered_count',
-            'cancelled_count',
-            'archived_count',
-            'missed_call_count')
-        return queryset
+        now = timezone.now()
 
+        data = {
+            "today": now.replace(hour=0, minute=0, second=0, microsecond=0),
+            "last_day": (now - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0),
+            "weekly": (now - timedelta(weeks=1)).replace(hour=0, minute=0, second=0, microsecond=0),
+            "monthly": (now - timedelta(days=30)).replace(hour=0, minute=0, second=0, microsecond=0),
+            "all": None
+        }
+        period = self.request.GET.get("period", "all")
+        start_date = data[period]
+        if start_date:
+            qs = (
+                self.model.objects.select_related('streams').prefetch_related('orders').annotate(
+                    new_count=Count('orders', filter=Q(orders__status=Order.Status.NEW) & Q(
+                        orders__created_at__gte=start_date)),
+                    ready_count=Count('orders', filter=Q(orders__status=Order.Status.READY) & Q(
+                        orders__created_at__gte=start_date)),
+                    delivery_count=Count('orders', filter=Q(orders__status=Order.Status.DELIVERY) & Q(
+                        orders__created_at__gte=start_date)),
+                    delivered_count=Count('orders', filter=Q(orders__status=Order.Status.DELIVERED) & Q(
+                        orders__created_at__gte=start_date)),
+                    cancelled_count=Count('orders', Q(orders__status=Order.Status.CANCELLED) & Q(
+                        orders__created_at__gte=start_date)),
+                    archived_count=Count('orders', filter=Q(orders__status=Order.Status.ARCHIVED) & Q(
+                        orders__created_at__gte=start_date)),
+                    missed_call_count=Count('orders', filter=Q(orders__status=Order.Status.MISSED_CALL) & Q(
+                        orders__created_at__gte=start_date)),
+
+                ).values(
+                    'product__title',
+                    'views_count',
+                    'name',
+                    'new_count',
+                    'ready_count',
+                    'delivery_count',
+                    'delivered_count',
+                    'cancelled_count',
+                    'archived_count',
+                    'missed_call_count'
+                )
+            )
+        else:
+            qs = (
+                self.model.objects.select_related('streams').prefetch_related('orders').annotate(
+                    new_count=Count('orders', filter=Q(orders__status=Order.Status.NEW)),
+                    ready_count=Count('orders', filter=Q(orders__status=Order.Status.READY)),
+                    delivery_count=Count('orders', filter=Q(orders__status=Order.Status.DELIVERY)),
+                    delivered_count=Count('orders', filter=Q(orders__status=Order.Status.DELIVERED)),
+                    cancelled_count=Count('orders', Q(orders__status=Order.Status.CANCELLED)),
+                    archived_count=Count('orders', filter=Q(orders__status=Order.Status.ARCHIVED)),
+                    missed_call_count=Count('orders', filter=Q(orders__status=Order.Status.MISSED_CALL)),
+
+                ).values(
+                    'product__title',
+                    'views_count',
+                    'name',
+                    'new_count',
+                    'ready_count',
+                    'delivery_count',
+                    'delivered_count',
+                    'cancelled_count',
+                    'archived_count',
+                    'missed_call_count'
+                )
+            )
+        return qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(object_list=object_list, **kwargs)
+        ctx.update(**self.get_queryset().aggregate(
+            summa_views_count=Sum('views_count'),
+            summa_new_count=Sum('new_count'),
+            summa_ready_count=Sum('ready_count'),
+            summa_delivery_count=Sum('delivery_count'),
+            summa_delivered_count=Sum('delivered_count'),
+            summa_cancelled_count=Sum('cancelled_count'),
+            summa_archived_count=Sum('archived_count'),
+            summa_missed_call_count=Sum('missed_call_count')
+        ))
+        return ctx
+
+
+class CompetitionListView(ListView):
+    template_name = 'apps/competition.html'
+    model = Stream
+
+    def get_queryset(self):
+        pass
+
+
+class TopProductListView(ListView):
+    template_name = 'apps/market.html'
+    context_object_name = 'products'
+    queryset = Product.objects.prefetch_related('orders').annotate(
+        delivered_count=Count('orders', orders__status=Order.Status.DELIVERED)
+    ).values(
+        'title',
+        'slug',
+        'image',
+        'count',
+        'extra_balance',
+        'price',
+        'delivered_count'
+    ).order_by('-delivered_count')[:5]

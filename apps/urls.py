@@ -31,6 +31,9 @@ urlpatterns = [
     path('stream/<int:pk>', StreamDetailView.as_view(), name='stream_detail'),
 
     path('statistics', StatisticsView.as_view(), name='statistics'),
+
     path('competition', CompetitionListView.as_view(), name='competition'),
+
+
 ]
 

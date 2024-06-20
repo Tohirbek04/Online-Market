@@ -2,14 +2,15 @@ from datetime import timedelta
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q, Sum
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
 from django.views.generic import CreateView, DetailView, FormView, ListView
 
 from apps.forms import OrderCreateModelForm, StreamCreateModelForm
-from apps.models import Category, LikeModel, Order, Product, Stream
+from apps.models import Category, LikeModel, Order, Product, Stream, Competition
+from users.models import User
 
 
 class BaseProductListView(ListView):
@@ -265,10 +266,27 @@ class StatisticsView(ListView):
 
 class CompetitionListView(ListView):
     template_name = 'apps/competition.html'
-    model = Stream
+    model = User
+    context_object_name = 'users'
 
     def get_queryset(self):
-        pass
+        if competition := Competition.objects.get(is_active=True):
+            start_date = competition.start_date
+            end_date = competition.end_date
+            qs = ((self.model.objects.prefetch_related('referral_user').annotate
+                (order_delivered_count=Count('referral_user', filter=Q
+                (referral_user__created_at__range=(start_date, end_date)) & Q
+                (referral_user__status=Order.Status.DELIVERED)))).values
+                (
+                'first_name',
+                'order_delivered_count'
+                )).order_by('-order_delivered_count')
+            return qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(object_list=object_list, **kwargs)
+        ctx['competition'] = Competition.objects.get(is_active=True)
+        return ctx
 
 
 class TopProductListView(ListView):

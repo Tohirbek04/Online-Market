@@ -55,6 +55,7 @@ class Order(Model):
         ARCHIVED = 'archived', 'Archived',
         MISSED_CALL = 'missed_call', 'MISSED CALL'
 
+    referral_user = ForeignKey('users.User', SET_NULL, null=True, blank=True, related_name='referral_user')
     user = ForeignKey('users.User', SET_NULL, null=True, blank=True, related_name='orders')
     product = ForeignKey('apps.Product', CASCADE, null=True, blank=True, related_name='orders')
     status = CharField(max_length=30, choices=Status.choices, default=Status.NEW)
@@ -90,15 +91,15 @@ class Stream(Model):
 
 class Competition(Model):
     name = CharField(max_length=255, unique=True)
-    start_date = DateField(null=True, blank=True)
-    end_date = DateField(null=True, blank=True)
-    active = BooleanField(db_default=False)
+    start_date = DateTimeField(null=True, blank=True)
+    end_date = DateTimeField(null=True, blank=True)
+    is_active = BooleanField(db_default=False)
 
     def __str__(self):
         return self.name
 
 
-class Settings(Model):
+class Setting(Model):
     operator_sum = IntegerField()
     text = CKEditor5Field(null=True, blank=True, config_name='extends')
     min_sum = IntegerField()

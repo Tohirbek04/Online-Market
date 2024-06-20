@@ -2,12 +2,20 @@
 {% load humanize %}
 {% block style %}
     <style>
-        .category-link.selected {
-            background-color: blue; /* Dark Red */
-            color: #fff;
-            font-weight: bold;
-        }
+    .btn:hover {
+        background-color: #f8f9fa; 
+        border-color: #0056b3; 
+        color: #0056b3; 
+    }
+
+    .btn.active {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        border: 1px solid; 
+    }
     </style>
+    
 {% endblock %}
 {% block content %}
     <div class="card mb-3">
@@ -58,11 +66,19 @@
                 <div class="container border-bottom-4">
                     <div class="header_tab_menu">
                         <div class="header_menu" style="overflow: auto">
-                            <a href="{% url 'market' %}" class="btn btn-default"> Hammasi </a>
-                            <a href="{% url 'top_product' %}" class="btn btn-default"> Top tovarlar </a>
+                            <a href="{% url 'market' %}"
+                               class="btn btn-default 
+                                {% if request.resolver_match.url_name == 'market' %}active{% endif %}">Hammasi
+                            </a>
+                            <a href="{% url 'top_product' %}"
+                               class="btn btn-default 
+                                {% if request.resolver_match.url_name == 'top_product' %}active{% endif %}">Top tovarlar
+                            </a>
                             {% for category in categories %}
                                 <a href="{% url 'category_by_product_market' category.slug %}"
-                                   class="btn btn-default"> {{ category.name }}
+                                   class="btn btn-default 
+                                    {% if request.resolver_match.kwargs.slug == category.slug %}active{% endif %}">
+                                    {{ category.name }}
                                 </a>
                             {% endfor %}
                         </div>
@@ -120,9 +136,6 @@
                         </div>
                     {% endfor %}
                 </div>
-{#                {% for contact in page_obj %}#}
-{#                    {{ contact.full_name|upper }}<br>#}
-{#                {% endfor %}#}
                 <div class="pagination">
                     <span class="step-links">
                         {% if page_obj.has_previous %}

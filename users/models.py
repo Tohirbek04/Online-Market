@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import (CASCADE, BigIntegerField, CharField, ForeignKey,
-                              ImageField, Model, SlugField, TextChoices)
+                              ImageField, Model, SlugField, TextChoices, FloatField)
 from django.template.defaultfilters import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -39,6 +39,7 @@ class User(AbstractUser):
         ADMIN = 'admin', 'Admin'
         CLIENT = 'client', 'Client'
 
+    balance = FloatField(db_default=0)
     type = CharField(max_length=10, choices=Type.choices, default=Type.CLIENT)
     username = None
     phone = CharField(max_length=20, unique=True)

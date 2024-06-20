@@ -1,13 +1,36 @@
 {% extends 'apps/base-window.html' %}
 {% load check_like %}
+{% block style %}
+   <style>
+    .btn:hover {
+        background-color: #f8f9fa; 
+        border-color: #0056b3; 
+        color: #0056b3; 
+    }
+
+    .btn.active {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        border: 1px solid; 
+    }
+    
+    </style>
+{% endblock %}
 {% block content %}
     <div class="container border-bottom-4">
         <div class="header_tab_menu">
             <div class="header_menu active" style="overflow: auto">
-                <a href="{% url 'product_list' %}" class="btn btn-default">Barchasi</a>
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-default
+                    {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Barchasi
+                </a>
                 {% for category in categories %}
                     <a href="{% url 'product_by_category' category.slug %}"
-                       class="btn btn-default">{{ category.name }}</a>
+                       class="btn btn-default
+                       {% if request.resolver_match.kwargs.slug == category.slug %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
                 {% endfor %}
             </div>
         </div>
@@ -18,11 +41,13 @@
                 <div class="mb-4 col-md-6 col-lg-4">
                     <div class="border rounded-1 h-100 d-flex flex-column justify-content-between pb-3">
                         <div class="overflow-hidden">
-                            <div class="position-relative rounded-top overflow-hidden"><a class="d-block" href="{% url 'product_detail' product.slug %}"><img
-                                    {% if product.image %}
-                                        class="img-fluid rounded-top" src="{{ product.image.url }}" alt=""/></a><span
-                                    {% endif %}
-                            class="badge rounded-pill bg-success position-absolute mt-2 me-2 z-index-2 top-0 end-0"></span>
+                            <div class="position-relative rounded-top overflow-hidden">
+                                <a class="d-block" href="{% url 'product_detail' product.slug %}"><img
+                                        {% if product.image %}
+                                            class="img-fluid rounded-top" src="{{ product.image.url }}" alt=""/></a><
+                                            span
+                                        {% endif %}
+                                class="badge rounded-pill bg-success position-absolute mt-2 me-2 z-index-2 top-0 end-0"></span>
                             </div>
                             <div class="p-3">
                                 <h5 class="fs-0"><a class="text-dark"
@@ -50,13 +75,15 @@
                                 <a class="btn btn-sm btn-falcon-default me-2" href="{% url 'click_like' product.pk %}">
                                     <span style="position: relative;">
                                         {% if request|check_like:product.pk %}
-                                            <i class="fas fa-heart" style="color: red; margin-left: 10px; font-size: 15px;"></i>
+                                            <i class="fas fa-heart"
+                                               style="color: red; margin-left: 10px; font-size: 15px;"></i>
                                         {% else %}
-                                            <i class="fas fa-heart" style="color: white; margin-left: 10px; font-size: 15px;"></i>
+                                            <i class="fas fa-heart"
+                                               style="color: white; margin-left: 10px; font-size: 15px;"></i>
                                         {% endif %}
                                     </span>
                                 </a>
-                                <a 
+                                <a
                                         class="btn btn-sm btn-falcon-default"
                                         href="{% url 'product_detail' product.slug %}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="Add to Cart"><span

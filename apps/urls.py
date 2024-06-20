@@ -1,11 +1,13 @@
 from django.urls import path
 
-from apps.views import (CategoryMarketProductView, ClickLikeView, LikeListView,
-                        MarketListView, OrderCreateView, OrderListView,
-                        OrderSuccessDetailView, ProductByCategoryListView,
-                        ProductDetailView, ProductListView,
-                        ProductStatisticsDetailView, StreamCreateListView,
-                        StreamDetailView, StatisticsView, CompetitionListView, TopProductListView)
+from apps.views import (CategoryMarketProductView, ClickLikeView,
+                        CompetitionListView, LikeListView, MarketListView,
+                        OrderCreateView, OrderListView, OrderSuccessDetailView,
+                        ProductByCategoryListView, ProductDetailView,
+                        ProductListView, ProductStatisticsDetailView,
+                        StatisticsView, StreamCreateListView, StreamDetailView,
+                        TopProductListView)
+
 urlpatterns = [
 
     path('', ProductListView.as_view(), name='product_list'),
@@ -31,6 +33,7 @@ urlpatterns = [
     path('stream/<int:pk>', StreamDetailView.as_view(), name='stream_detail'),
 
     path('statistics', StatisticsView.as_view(), name='statistics'),
+
     path('competition', CompetitionListView.as_view(), name='competition'),
 ]
 

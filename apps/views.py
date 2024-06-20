@@ -2,14 +2,15 @@ from datetime import timedelta
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q, Sum
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
-from django.views.generic import CreateView, DetailView, FormView, ListView
+from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView
 
 from apps.forms import OrderCreateModelForm, StreamCreateModelForm
-from apps.models import Category, LikeModel, Order, Product, Stream
+from apps.models import Category, Competition, LikeModel, Order, Product, Stream
+from users.models import User
 
 
 class BaseProductListView(ListView):
@@ -144,7 +145,7 @@ class StreamCreateListView(LoginRequiredMixin, CreateView, ListView):
         return context
 
 
-class StreamDetailView(DetailView):
+class StreamDetailView(LoginRequiredMixin, DetailView):
     template_name = 'apps/products/product-detail.html'
     model = Stream
     context_object_name = 'stream'
@@ -160,7 +161,7 @@ class StreamDetailView(DetailView):
         return context
 
 
-class ProductStatisticsDetailView(DetailView):
+class ProductStatisticsDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'apps/products/product-stats.html'
     context_object_name = 'product'
@@ -174,7 +175,7 @@ class ProductStatisticsDetailView(DetailView):
         return context
 
 
-class StatisticsView(ListView):
+class StatisticsView(LoginRequiredMixin, ListView):
     model = Stream
     template_name = 'apps/statistics.html'
     context_object_name = 'streams'
@@ -263,12 +264,29 @@ class StatisticsView(ListView):
         return ctx
 
 
-class CompetitionListView(ListView):
+class CompetitionListView(LoginRequiredMixin, ListView):
     template_name = 'apps/competition.html'
-    model = Stream
+    model = User
+    context_object_name = 'users'
 
     def get_queryset(self):
-        pass
+        if competition := get_object_or_404(Competition, is_active=True):
+            start_date = competition.start_date
+            end_date = competition.end_date
+            qs = ((self.model.objects.prefetch_related('referral_user').annotate
+                (order_delivered_count=Count('referral_user', filter=Q
+                (referral_user__created_at__range=(start_date, end_date)) & Q
+                (referral_user__status=Order.Status.DELIVERED)))).values
+                (
+                'first_name',
+                'order_delivered_count'
+                )).order_by('-order_delivered_count')
+            return qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(object_list=object_list, **kwargs)
+        ctx['competition'] = get_object_or_404(Competition, is_active=True)
+        return ctx
 
 
 class TopProductListView(ListView):
@@ -285,3 +303,13 @@ class TopProductListView(ListView):
         'price',
         'delivered_count'
     ).order_by('-delivered_count')[:5]
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(object_list=object_list, **kwargs)
+        ctx['categories'] = Category.objects.all()
+        return ctx
+
+
+
+
+

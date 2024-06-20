@@ -14,7 +14,7 @@
                         <div class="card text-white bg-info">
                             <div class="card-body">
                                 <div class="card-title">Boshlash</div>
-                                <p class="card-text">1-Mart, 2024-yil</p>
+                                <p class="card-text">{{ competition.start_date }}</p>
                             </div>
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                         <div class="card text-white bg-danger">
                             <div class="card-body">
                                 <div class="card-title">Yakunlash</div>
-                                <p class="card-text">31-Avgust, 2024-yil</p>
+                                <p class="card-text">{{ competition.end_date }}</p>
                             </div>
                         </div>
                     </div>
@@ -57,15 +57,14 @@
                                 </tr>
                                 </thead>
                                 <tbody class="list">
-                                {% for stream in streams %}
+                                {% for user in users %}
                                     <tr>
                                         <td class="name">1</td>
-                                        <td class="email">{{ stream.owner__first_name }}</td>
-                                        <td class="age">{{ stream.delivered_count }}</td>
+                                        <td class="email">{{ user.first_name }}</td>
+                                        <td class="age">{{ user.order_delivered_count }}</td>
                                     </tr>
                                     
                                 {% endfor %}
-
                                 </tbody>
                             </table>
                         </div>

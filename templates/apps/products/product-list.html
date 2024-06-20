@@ -95,10 +95,6 @@
                     </div>
                 </div>
             {% endfor %}
-            {% for contact in page_obj %}
-                {{ contact.full_name|upper }}<br>
-            {% endfor %}
-        
             <div class="pagination">
                 <span class="step-links">
                     {% if page_obj.has_previous %}

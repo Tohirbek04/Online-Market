@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
-from apps.models import Category, Product, Order, Competition, Settings
-from apps.proxy import NewOrderProxyModel, ReadyOrderProxyModel, DeliveryOrderProxyModel, \
-    DeliveredOrderProxyModel, CancelledOrderProxyModel, MissedCallOrderProxyModel
+from apps.models import Category, Competition, Order, Product, Setting
+from apps.proxy import (CancelledOrderProxyModel, DeliveredOrderProxyModel,
+                        DeliveryOrderProxyModel, MissedCallOrderProxyModel,
+                        NewOrderProxyModel, ReadyOrderProxyModel)
 
 
 @admin.register(Category)
@@ -56,6 +57,6 @@ class CompetitionModelAdmin(ModelAdmin):
     pass
 
 
-@admin.register(Settings)
+@admin.register(Setting)
 class SettingsModelAdmin(ModelAdmin):
     pass

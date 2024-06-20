@@ -1,5 +1,7 @@
-from apps.managers import NewOrderManager, ReadyOrderManager, DeliveryOrderManager, \
-    DeliveredOrderManager, CancelledOrderManager, ArchivedOrderManager, MissedCallOrderManager
+from apps.managers import (ArchivedOrderManager, CancelledOrderManager,
+                           DeliveredOrderManager, DeliveryOrderManager,
+                           MissedCallOrderManager, NewOrderManager,
+                           ReadyOrderManager)
 from apps.models import Order
 
 

@@ -1,5 +1,6 @@
-{% extends 'apps/base-window.html' %}
+{% extends 'apps/parts/base-window.html' %}
 {% load humanize %}
+{% load template_tags %}
 {% block content %}
     <div class="card mb-3">
         <div class="card-body">
@@ -11,9 +12,10 @@
                                 <h5>Mening hisobim</h5>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title">Asosiy balans: {{ real_balance|intcomma }} so'm</h5>
-                                <h5 class="card-title">ihtimoli balans: {{ possibly_balance|intcomma }} so'm</h5>
-                                <h5 class="card-title">To'lab berildi: 0 so'm</h5>
+                                <h5 class="card-title">Asosiy balans: {{ user.balance|intcomma }} so'm</h5>
+                                <h5 class="card-title">ihtimoli balans: {{ user_possibly_balance|intcomma }} so'm</h5>
+                                <h5 class="card-title">To'lab
+                                    berildi: {{ user.get_paid_balance|default_if_none:"0"|intcomma }} so'm</h5>
                             </div>
                         </div>
                     </div>
@@ -22,63 +24,28 @@
                             <div class="card-header">
                                 <h5>To'lovga sorov berish formasi</h5>
                             </div>
-                            <nav>
-                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                    <button id="nav-money-tab" class="nav-link active" data-bs-toggle="tab"
-                                            data-bs-target="#nav-money" type="button" role="tab"
-                                            aria-controls="nav-money" aria-selected="true">Pul
-                                    </button>
-                                </div>
-                            </nav>
                             <div class="tab-content" id="nav-tabContent">
                                 <div class="tab-pane fade show active" id="nav-money" role="tabpanel"
                                      aria-labelledby="nav-money-tab">
-                                    <form class="card-body" method="post">
-                                        <input type="hidden" name="csrfmiddlewaretoken"
-                                               value="l7B9Ko9j51364dctyHFPxtjhxZphUggSNxZqe7ZFW0mZtRfrZWlMP77uZK3c8RA5">
+                                    <form class="card-body" method="post" action="{% url 'transaction' %}">
+                                        {% csrf_token %}
                                         <div class="form-group">
-                                            Karta raqami <input type="text" name="card_number" class="form-control"
+                                            Karta raqami <input type="number" name="card_number" class="form-control"
                                                                 placeholder="Karta raqamini kiriting" maxlength="16"
                                                                 required="" id="id_card_number">
                                         </div>
                                         <div class="form-group">
-                                            Amount <input type="number" name="amount" class="form-control"
+                                            Miqdor <input type="number" name="amount" class="form-control"
                                                           placeholder="Miqdorini kiriting" required="" id="id_amount">
-                                        </div>
-                                        <div class="form-group">
-                                            <select name="type" class="form-control class-type" style="display: none;"
-                                                    id="id_type">
-                                                <option value="money">Pul</option>
-                                            </select>
                                         </div>
                                         <input type="submit" value="Tasdiqlash" class="btn btn-primary">
-                                    </form>
-                                </div>
-                                <div class="tab-pane fade" id="nav-coin" role="tabpanel" aria-labelledby="nav-coin-tab">
-                                    <form class="card-body" method="post">
-                                        <div class="form-group">
-                                            Karta raqami <input type="text" name="card_number" class="form-control"
-                                                                placeholder="Karta raqamini kiriting" maxlength="16"
-                                                                required="" id="id_card_number">
-                                        </div>
-
-                                        <div class="form-group">
-                                            Amount <input type="number" name="amount" class="form-control"
-                                                          placeholder="Miqdorini kiriting" required="" id="id_amount">
-                                        </div>
-                                        <div class="form-group">
-                                            <select name="type" class="form-control class-type" style="display: none;"
-                                                    id="id_type">
-                                                <option value="money">Pul</option>
-                                            </select>
-                                        </div>
-                                        <input type="submit" method="POST" value="Tasdiqlash" class="btn btn-primary">
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div><br><br>
+                </div>
+                <br><br>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -92,9 +59,26 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr class="text-center">
-                            <th colspan="5"> Hozircha sizda pul yechish sorovlari mavjud emas</th>
-                        </tr>
+                        {% for transaction in user.transaction_set.all %}
+                            <tr>
+                                <th>{{ transaction.update_at }}</th>
+                                <th>{{ transaction.card_number|card_number }}</th>
+                                <th>{{ transaction.amount|intcomma }} so'm</th>
+                                <th>{{ transaction.get_status_display }}</th>
+                                <th>{{ transaction.text|default_if_none:''|safe }}</th>
+                                {% if transaction.chek %}
+                                    <th>
+                                        <a href="{{ transaction.chek.url }}" target="_blank">
+                                            <img src="{{ transaction.chek.url }}" alt="Image"
+                                                 style="max-width: 100px; max-height: 100px;">
+                                        </a>
+                                    </th>
+                                {% else %}
+                                    <th>No Image</th>
+                                {% endif %}
+                                {#                            <th colspan="5"> Hozircha sizda pul yechish sorovlari mavjud emas</th>#}
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>

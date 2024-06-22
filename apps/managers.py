@@ -34,3 +34,29 @@ class ArchivedOrderManager(Manager):
 class MissedCallOrderManager(Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status=self.model.Status.MISSED_CALL)
+
+
+class TransactionProcessManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.PROCESS)
+
+
+class TransactionCancelledManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.CANCELED)
+
+
+class TransactionPaidManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.PAID)
+
+
+class OperatorTransactionManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(user__type='operator')
+
+
+class ClientTransactionManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(user__type='client')
+

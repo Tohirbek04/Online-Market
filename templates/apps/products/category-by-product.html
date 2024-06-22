@@ -1,5 +1,5 @@
-{% extends 'apps/base-window.html' %}
-{% load check_like %}
+{% extends 'apps/parts/base-window.html' %}
+{% load template_tags %}
 {% block style %}
    <style>
     .btn:hover {
@@ -58,7 +58,7 @@
                                     {{ product.price }} so'm
                                 </h5>
                                 <p class="fs--1 mb-1">Shipping Cost:
-                                    <strong>{{ product.shopping_cost }} so'm</strong></p>
+                                    <strong>{{ setting.shopping_cost }} so'm</strong></p>
                                 <p class="fs--1 mb-1">Stock: <strong
                                         class="text-success">{{ product.stock }}</strong>
                                 </p>

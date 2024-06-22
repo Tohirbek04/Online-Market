@@ -1,0 +1,91 @@
+{% extends 'apps/parts/base-window.html' %}
+
+{% block back_css %}
+    <style>
+
+        .arrow-button {
+            display: inline-block;
+            padding: 8px 20px; /* Paddingni o'zgartiring: yuqoridan 8px, pastidan 8px */
+            background-color: #ff0000;
+            color: white;
+            text-decoration: none;
+            font-size: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .arrow-button:hover {
+            background-color: white; /* Hoverda rangni o'zgartiring: o'chiq qizil rang */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'product_list' %}" class="arrow-button">orqaga</a>
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="container">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-center">
+                        <tr>
+                            <th scope="col">#.</th>
+                            <th scope="col">Operator</th>
+                            <th scope="col">Mahsulot</th>
+                            <th scope="col">Oqim</th>
+                            <th scope="col">Buyurtmachi</th>
+                            <th scope="col">Viloyat</th>
+                            <th scope="col">Holat</th>
+                            <th scope="col">Izoh</th>
+                            <th scope="col">Sana</th>
+                        </tr>
+                        </thead>
+                        {% for order in orders %}
+                            <tbody class="text-center">
+                            <tr style="text-align: center;">
+                                <th scope="col">{{ order.pk }}</th>
+                                <th scope="col">{{ order.operator.id }}</th>
+                                <th scope="col">{{ order.product.title }}</th>
+                                <th scope="col">chegiram {{ order.stream.discount }} ming</th>
+                                <th scope="col">{{ order.name }}</th>
+                                <th scope="col">{{ order.region|default_if_none:"" }}</th>
+                                <th scope="col" class="status"> {{ order.status }}</th>
+                                <th scope="col">{{ order.description|default_if_none:""|safe }}</th>
+                                <th scope="col">{{ order.updated_at}}</th>
+                            </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block request_status_js %}
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const rows = document.querySelectorAll("#orderTable tr");
+
+    rows.forEach(row => {
+        const statusCell = row.querySelector(".status");
+        const actionCell = row.querySelector("td:last-child");
+
+        if (statusCell && statusCell.textContent.trim() === "cancelled") {
+            statusCell.classList.add("status-cancelled");
+
+            const button = document.createElement("button");
+            button.textContent = "Change to New";
+            button.addEventListener("click", function() {
+                statusCell.textContent = "new";
+                statusCell.classList.remove("status-cancelled");
+                statusCell.classList.add("status-new");
+            });
+
+            actionCell.appendChild(button);
+        }
+    });
+});
+</script>
+{% endblock %}
+

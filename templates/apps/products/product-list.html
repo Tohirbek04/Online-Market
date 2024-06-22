@@ -1,6 +1,6 @@
-{% extends 'apps/base-window.html' %}
-{% load check_like %}
+{% extends 'apps/parts/base-window.html' %}
 {% load humanize %}
+
 {% block content %}
     <div class="card mt-2 mb-2">
         <div class="card-header bg-light">
@@ -8,7 +8,9 @@
                 <div class="col">
                     <h5 class="mb-0" id="followers"></h5>
                 </div>
-                <div class="col text-end"><a class="font-sans-serif" href="{% url 'product_list' %}">Kategoriyalar</a>
+                <div
+                        class="col text-end"><a class="font-sans-serif"
+                                                href="{% url 'product_list' %}">Kategoriyalar</a>
                 </div>
             </div>
         </div>
@@ -53,7 +55,7 @@
                                     {{ product.price|intcomma }} so'm
                                 </h5>
                                 <p class="fs--1 mb-1">Shipping Cost:
-                                    <strong>{{ product.shopping_cost }} so'm</strong></p>
+                                    <strong>{{ setting.shopping_cost }} so'm</strong></p>
                                 {% if product.is_in_stock %}
                                     <p class="fs--1 mb-1">Stock: <strong
                                             class="text-success">avalibale</strong>
@@ -73,21 +75,18 @@
                                     class="fa fa-star text-300"></span><span class="ms-1">(8)</span>
                             </div>
                             <div>
-                                 <a href="{% url 'click_like' product.pk %}" style="text-decoration: none; color: inherit;">
+                                <a href="{% url 'click_like' product.pk %}"
+                                   style="text-decoration: none; color: inherit;">
                                     <span style="position: relative;">
-                                        {% if request|check_like:product.pk %}
-                                            <i class="fas fa-heart" style="color: red; margin-left: 10px; font-size: 15px;"></i>
-                                            
-                                        {% else %}
-                                            <i class="fas fa-heart" style="color: white; margin-left: 10px; font-size: 15px;"></i>
-                                        {% endif %}
+                                            <i class="fas fa-heart"
+                                               style="color: {% if product.is_liked %}red{% endif %}; margin-left: 10px; font-size: 15px;"></i>
                                     </span>
                                 </a>
                                 <a class="btn btn-sm btn-falcon-default"
                                    href="{% url 'product_detail' product.slug %}" data-bs-toggle="tooltip"
                                    data-bs-placement="top" title="Add to Cart">
                                     <span
-                                        class="fas fa-cart-plus">
+                                            class="fas fa-cart-plus">
                                     </span>
                                 </a>
                             </div>
@@ -99,22 +98,25 @@
                 <span class="step-links">
                     {% if page_obj.has_previous %}
                         <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page=1">&laquo; 1 </a>
-                        <a class="btn btn-sm btn-falcon-default text-primary me-2"  href="?page={{ page_obj.previous_page_number }}">oldingisi</a>
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                           href="?page={{ page_obj.previous_page_number }}">oldingisi</a>
                     {% endif %}
-        
-                    <span class="btn btn-sm btn-falcon-default text-primary me-2" >
+
+                    <span class="btn btn-sm btn-falcon-default text-primary me-2">
                             Page {{ page_obj.number }}
                     </span>
-        
+
                     {% if page_obj.has_next %}
-                        <a class="btn btn-sm btn-falcon-default text-primary me-2"  href="?page={{ page_obj.next_page_number }}">keyingisi</a>
-                        <a class="btn btn-sm btn-falcon-default text-primary me-2"  href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                           href="?page={{ page_obj.next_page_number }}">keyingisi</a>
+                        <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                           href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
                     {% endif %}
                 </span>
             </div>
         </div>
     </div>
-    
+
 {% endblock %}
 
 

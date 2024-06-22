@@ -1,4 +1,4 @@
-{% extends 'apps/base-window.html' %}
+{% extends 'apps/parts/base-window.html' %}
 {% load static %}
 {% block content %}
     <div class="card">
@@ -14,8 +14,9 @@
                     <br>
                     <p>{{ user.phone }}</p>
                 </h6>
-                <p class="fs--2 mb-1"><a class="btn btn-link text-700" href="{% url 'settings' %}">Sozlamalarga
-                        o'tish</a></p>
+                <p class="fs--2 mb-1">
+                    <a class="btn btn-link text-700" href="{% url 'profile_update' %}">Sozlamalarga o'tish</a>
+                </p>
                 
             </div>
         </div>

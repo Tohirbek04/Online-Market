@@ -1,0 +1,143 @@
+{% extends 'apps/parts/base-window.html' %}
+{% load static %}
+
+{% block login_bot_css %}
+    <link href="{% static 'apps/vendors/swiper/swiper-bundle.min.css' %}" rel="stylesheet"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
+          rel="stylesheet" type="text/css"/>
+
+    <style>
+        .code-container {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+
+        .code-container h1 {
+            margin-bottom: 1rem;
+        }
+
+        .code-container p {
+            margin-bottom: 2rem;
+        }
+
+        .code-container a {
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .code-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .code-inputs input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.5rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .code-inputs input:focus {
+            border-color: #000;
+            outline: none;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin-top: 1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="code-container">
+            <h1>Kodni Kiriting</h1>
+            <p>
+                <a href="https://t.me/alijahonn_bot">@alijahon_bot</a> telegram botiga kiring va 1
+                daqiqalik kodingizni oling.
+            </p>
+            <div class="code-inputs">
+                <input type="text" maxlength="1" class="code">
+                <input type="text" maxlength="1" class="code">
+                <input type="text" maxlength="1" class="code">
+                <input type="text" maxlength="1" class="code">
+                <input type="text" maxlength="1" class="code">
+                <input type="text" maxlength="1" class="code">
+            </div>
+            <div class="error-message" id="error-message"></div>
+            <div class="loading-spinner" id="loading-spinner">
+                <img src="{% static 'loading.gif' %}" alt="Loading...">
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const codes = document.querySelectorAll(".code");
+        const errorMessage = document.getElementById("error-message");
+        const loadingSpinner = document.getElementById("loading-spinner");
+
+        codes[0].focus();
+
+        codes.forEach((code, index, codesArray) => {
+            code.addEventListener("input", (e) => {
+                if (e.target.value.length === 1) {
+                    const nextIndex = (index + 1) % codesArray.length;
+                    codesArray[nextIndex].focus();
+                } else if (e.target.value.length === 0) {
+                    const prevIndex = (index - 1 + codesArray.length) % codesArray.length;
+                    codesArray[prevIndex].focus();
+                }
+            });
+        });
+
+        document.addEventListener('input', function (event) {
+            const inputs = document.querySelectorAll('.code-inputs input');
+            const allFilled = Array.from(inputs).every(input => input.value.length === 1);
+
+            if (allFilled) {
+                const code = Array.from(inputs).map(input => input.value).join('');
+
+                loadingSpinner.style.display = 'block';
+
+                $.ajax({
+                    type: "POST",
+                    url: 'http://localhost:8000/login-check',
+                    data: {
+                        code: code,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: (res) => {
+                        window.location.href = '{% url "profile" %}';
+                    },
+                    error: (err) => {
+                        loadingSpinner.style.display = 'none';
+                        errorMessage.textContent = 'Error: ' + err.responseText;
+                        inputs.forEach(input => input.value = "");
+                        codes[0].focus();
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

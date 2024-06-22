@@ -1,15 +1,14 @@
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
 from users.models import User
-from users.proxy import (AdminProxyModel, ClientProxyModel, ManagerProxyModel,
-                         OperatorProxyModel)
+from users.proxy import (AdminProxyModel, ClientProxyModel, CourierProxyModel,
+                         ManagerProxyModel, OperatorProxyModel)
 
 
 class UserModelAdmin(UserAdmin):
-    list_display = 'id', 'phone'
+    list_display = 'id', 'phone', 'first_name', 'last_name'
     filter_horizontal = ['groups', 'user_permissions']
     fieldsets = (
         (None, {"fields": ("password", "phone")}),
@@ -31,33 +30,27 @@ class UserModelAdmin(UserAdmin):
     search_fields = ("phone",)
     ordering = ("phone",)
 
+    def save_model(self, request, obj: User, form, change):
+        obj.type = self.type
+        obj.is_staff = self.type == obj.Type.MANAGER
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(OperatorProxyModel)
 class OperatorModelAdmin(UserModelAdmin):
-
-    def save_model(self, request, obj, form, change):
-        obj.type = User.Type.OPERATOR
-        super().save_model(request, obj, form, change)
+    type = User.Type.OPERATOR
 
 
 @admin.register(ManagerProxyModel)
 class ManagerModelAdmin(UserModelAdmin):
-
-    def save_model(self, request, obj, form, change):
-        obj.type = User.Type.MANAGER
-        super().save_model(request, obj, form, change)
+    type = User.Type.MANAGER
 
 
 @admin.register(ClientProxyModel)
 class ClientModelAdmin(UserModelAdmin):
-    def save_model(self, request, obj, form, change):
-        obj.type = User.Type.CLIENT
-        super().save_model(request, obj, form, change)
+    type = User.Type.CLIENT
 
 
-@admin.register(AdminProxyModel)
-class AdminModelAdmin(UserModelAdmin):
-
-    def save_model(self, request, obj, form, change):
-        obj.type = User.Type.ADMIN
-        super().save_model(request, obj, form, change)
+@admin.register(CourierProxyModel)
+class CourierModelAdmin(UserModelAdmin):
+    type = User.Type.COURIER

@@ -3,9 +3,9 @@ import re
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.core.exceptions import ValidationError
-from django.forms import CharField, ModelForm, PasswordInput
+from django.forms import CharField, ModelChoiceField, ModelForm, PasswordInput, Form
 
-from users.models import User
+from users.models import District, Region, User
 
 
 class CreateForm(UserCreationForm):
@@ -23,6 +23,10 @@ class CreateForm(UserCreationForm):
 
 
 class LoginForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = User
         fields = 'phone', 'password'
@@ -47,10 +51,41 @@ class LoginForm(ModelForm):
 
 
 class PasswordUpdateForm(ModelForm):
-    old_password = CharField(max_length=20, widget=PasswordInput)
-    new_password = CharField(max_length=20, widget=PasswordInput)
-    conform_password = CharField(max_length=20, widget=PasswordInput)
+    old_password = CharField(max_length=20, widget=PasswordInput, label="Old Password")
+    new_password = CharField(max_length=20, widget=PasswordInput, label="New Password")
+    confirm_password = CharField(max_length=20, widget=PasswordInput, label="Confirm New Password")
 
     class Meta:
         model = User
-        fields = 'password',
+        fields = []
+
+    def clean(self):
+        cleaned_data = super().clean()
+        old_password = cleaned_data.get("old_password")
+        new_password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if new_password and new_password != confirm_password:
+            self.add_error('confirm_password', "New password and confirm password do not match.")
+
+        user = authenticate(phone=self.instance.phone, password=old_password)
+        if not user:
+            self.add_error('old_password', "Old password is incorrect.")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['new_password'])
+        if commit:
+            user.save()
+        return user
+
+
+class UpdateModelForm(ModelForm):
+    region = ModelChoiceField(queryset=Region.objects.all(), required=False)
+    district = ModelChoiceField(queryset=District.objects.all(), required=False)
+
+    class Meta:
+        model = User
+        fields = 'first_name', 'last_name', 'region', 'district', 'about'

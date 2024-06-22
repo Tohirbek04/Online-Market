@@ -1,4 +1,4 @@
-{% extends 'apps/base-window.html' %}
+{% extends 'apps/parts/base-window.html' %}
 {% block content %}
     <div class="content_auth_form">
         <div class="content_auth_form_group">
@@ -42,8 +42,8 @@
                                     </div>
 
                                     <div class="col-auto">
-                                        <a class="fs--1" href="#">
-                                            Foydalanish shartlari
+                                        <a class="fs--1" href="{% url 'bot_login' %}">
+                                            Bot orqali kirish
                                         </a>
                                     </div>
                                 </div>
@@ -59,4 +59,13 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block phone_number_js %}
+    <script>
+    $('#phone-mask').inputmask({
+        "mask": "+\\9\\98(99) 999-99-99"
+    });
+    $('#messages-modal').modal('show');
+</script>
 {% endblock %}

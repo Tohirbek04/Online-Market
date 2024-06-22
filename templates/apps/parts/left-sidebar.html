@@ -1,6 +1,4 @@
 {% load static %}
-{% load static %}
-
 <nav class="navbar navbar-light navbar-vertical navbar-expand-xl">
     <script>
         var navbarStyle = localStorage.getItem("navbarStyle");
@@ -68,7 +66,7 @@
                     <span class="nav-link-text ps-1">Statistika</span>
                 </div>
             </a>
-            <a class="nav-link" href="#" role="button" aria-expanded="false">
+            <a class="nav-link" href="{% url 'requests' %}" role="button" aria-expanded="false">
                 <div class="d-flex align-items-center">
                     <span class="nav-link-icon"></span>
                     <span class="nav-link-text ps-1">So'rovlar</span>

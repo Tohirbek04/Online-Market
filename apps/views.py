@@ -1,30 +1,45 @@
 from datetime import timedelta
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q, Sum, OuterRef, Case, BooleanField, When, Subquery, Exists
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
-from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView
+from django.views.generic import CreateView, DetailView, FormView, ListView
 
-from apps.forms import OrderCreateModelForm, StreamCreateModelForm
-from apps.models import Category, Competition, LikeModel, Order, Product, Stream
+from apps.forms import (OrderCreateModelForm, StreamCreateModelForm,
+                        TransactionModelForm)
+from apps.mixins import OperatorRequiredMixin
+from apps.models import (Category, Competition, LikeModel, Order, Product,
+                         SiteSetting, Stream, Transaction)
 from users.models import User
 
 
 class BaseProductListView(ListView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category')
+
+    def get_queryset(self):
+        user_has_liked_subquery = LikeModel.objects.filter(user=self.request.user, product=OuterRef('pk'))
+        return super().get_queryset().annotate(is_liked=Exists(user_has_liked_subquery))
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['categories'] = Category.objects.all()
+        context['setting'] = SiteSetting.objects.first()
         return context
 
 
 class ProductListView(BaseProductListView):
-    paginate_by = 3
+    paginate_by = 10
     template_name = 'apps/products/product-list.html'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if search := self.request.GET.get('search'):
+            qs = qs.filter(title__icontains=search)
+            return qs
+        return qs
 
 
 class ProductByCategoryListView(BaseProductListView):
@@ -35,18 +50,32 @@ class ProductByCategoryListView(BaseProductListView):
         slug = self.kwargs.get('slug')
         qs = super().get_queryset()
         if slug:
-            qs = qs.filter(category__slug=slug)
+            qs = qs.filter(category__slug=slug).select_related('category')
         return qs
 
 
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'apps/products/product-detail.html'
+    context_object_name = 'product'
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        self._cache_stream = None
+        if pk is not None:
+            self._cache_stream = get_object_or_404(Stream.objects.all(), pk=pk)
+            return self._cache_stream.product
+        return super().get_object(queryset)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['price'] = self.object.price
-        return context
+        ctx = super().get_context_data(**kwargs)
+        price = self.object.price
+        if self._cache_stream:
+            price -= self._cache_stream.discount
+
+        ctx['stream_id'] = self.kwargs.get(self.pk_url_kwarg, '')
+        ctx['price'] = price
+        return ctx
 
 
 class OrderCreateView(FormView):
@@ -55,10 +84,15 @@ class OrderCreateView(FormView):
 
     def form_valid(self, form):
         order = form.save(commit=False)
+        if stream_id := self.request.POST.get('stream'):
+            order.referral_user = get_object_or_404(Stream, pk=stream_id).owner
         if self.request.user.is_authenticated:
             order.user = self.request.user
         order.save()
-        return redirect('status_success', order.product_id)
+        return redirect('status_success', order.id)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -67,13 +101,19 @@ class OrderListView(LoginRequiredMixin, ListView):
     context_object_name = 'orders'
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        return self.queryset.filter(user=self.request.user).select_related('product')
 
 
 class OrderSuccessDetailView(DetailView):
-    model = Product
+    model = Order
     template_name = 'status/accepted.html'
-    context_object_name = 'product'
+    context_object_name = 'order'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        _settings = SiteSetting.objects.first()
+        ctx['delivery_price'] = _settings.shopping_cost or 0
+        return ctx
 
 
 class ClickLikeView(View):
@@ -90,7 +130,7 @@ class LikeListView(ListView):
     context_object_name = 'likes'
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        return self.queryset.filter(user=self.request.user).select_related('product')
 
 
 class MarketListView(LoginRequiredMixin, ListView):
@@ -103,6 +143,12 @@ class MarketListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['categories'] = Category.objects.all()
         return context
+
+    def get_queryset(self):
+        if search := self.request.GET.get('search'):
+            qs = self.queryset.filter(title__icontains=search)
+            return qs
+        return super().get_queryset()
 
 
 class CategoryMarketProductView(MarketListView):
@@ -145,22 +191,6 @@ class StreamCreateListView(LoginRequiredMixin, CreateView, ListView):
         return context
 
 
-class StreamDetailView(LoginRequiredMixin, DetailView):
-    template_name = 'apps/products/product-detail.html'
-    model = Stream
-    context_object_name = 'stream'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        stream = self.object
-        stream.views_count += 1
-        stream.save()
-        product = Product.objects.get(pk=stream.product.pk)
-        context['price'] = product.price - stream.discount
-        context['product'] = product
-        return context
-
-
 class ProductStatisticsDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'apps/products/product-stats.html'
@@ -195,6 +225,7 @@ class StatisticsView(LoginRequiredMixin, ListView):
         if start_date:
             qs = (
                 self.model.objects.select_related('streams').prefetch_related('orders').annotate(
+                    total_views_count=Count('views_count', filter=Q(orders__created_at__gte=start_date)),
                     new_count=Count('orders', filter=Q(orders__status=Order.Status.NEW) & Q(
                         orders__created_at__gte=start_date)),
                     ready_count=Count('orders', filter=Q(orders__status=Order.Status.READY) & Q(
@@ -211,8 +242,8 @@ class StatisticsView(LoginRequiredMixin, ListView):
                         orders__created_at__gte=start_date)),
 
                 ).values(
+                    'total_views_count',
                     'product__title',
-                    'views_count',
                     'name',
                     'new_count',
                     'ready_count',
@@ -226,6 +257,7 @@ class StatisticsView(LoginRequiredMixin, ListView):
         else:
             qs = (
                 self.model.objects.select_related('streams').prefetch_related('orders').annotate(
+                    total_views_count=Count('orders'),
                     new_count=Count('orders', filter=Q(orders__status=Order.Status.NEW)),
                     ready_count=Count('orders', filter=Q(orders__status=Order.Status.READY)),
                     delivery_count=Count('orders', filter=Q(orders__status=Order.Status.DELIVERY)),
@@ -235,8 +267,8 @@ class StatisticsView(LoginRequiredMixin, ListView):
                     missed_call_count=Count('orders', filter=Q(orders__status=Order.Status.MISSED_CALL)),
 
                 ).values(
+                    'total_views_count',
                     'product__title',
-                    'views_count',
                     'name',
                     'new_count',
                     'ready_count',
@@ -252,7 +284,7 @@ class StatisticsView(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         ctx = super().get_context_data(object_list=object_list, **kwargs)
         ctx.update(**self.get_queryset().aggregate(
-            summa_views_count=Sum('views_count'),
+            summa_views_count=Sum('total_views_count'),
             summa_new_count=Sum('new_count'),
             summa_ready_count=Sum('ready_count'),
             summa_delivery_count=Sum('delivery_count'),
@@ -270,22 +302,23 @@ class CompetitionListView(LoginRequiredMixin, ListView):
     context_object_name = 'users'
 
     def get_queryset(self):
-        if competition := get_object_or_404(Competition, is_active=True):
-            start_date = competition.start_date
-            end_date = competition.end_date
-            qs = ((self.model.objects.prefetch_related('referral_user').annotate
-                (order_delivered_count=Count('referral_user', filter=Q
-                (referral_user__created_at__range=(start_date, end_date)) & Q
-                (referral_user__status=Order.Status.DELIVERED)))).values
-                (
-                'first_name',
-                'order_delivered_count'
-                )).order_by('-order_delivered_count')
+        self.competition = get_object_or_404(Competition, is_active=True)
+        if self.competition:
+            start_date = self.competition.start_date
+            end_date = self.competition.end_date
+            qs = (
+                (self.model.objects.prefetch_related('referral_user')
+                 .annotate(order_delivered_count=
+                           Count('referral_user', filter=
+                           Q(referral_user__created_at__range=(start_date, end_date)) &
+                           Q(referral_user__status=Order.Status.DELIVERED)))
+                 ).values('first_name', 'order_delivered_count')
+            ).order_by('-order_delivered_count')
             return qs
 
     def get_context_data(self, *, object_list=None, **kwargs):
         ctx = super().get_context_data(object_list=object_list, **kwargs)
-        ctx['competition'] = get_object_or_404(Competition, is_active=True)
+        ctx['competition'] = self.competition
         return ctx
 
 
@@ -310,6 +343,74 @@ class TopProductListView(ListView):
         return ctx
 
 
+class TransactionDetailView(LoginRequiredMixin, CreateView):
+    template_name = 'users/payment.html'
+    model = Transaction
+    form_class = TransactionModelForm
+    success_url = reverse_lazy('payment')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def form_valid(self, form):
+        tr = form.save(commit=False)
+        tr.user = self.request.user
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return redirect('payment')
 
 
+class RequestListView(ListView):
+    queryset = Order.objects.all().select_related('product', 'stream', 'operator')
+    template_name = 'apps/request-list.html'
+    context_object_name = 'orders'
 
+
+class BaseOrderListView(OperatorRequiredMixin, ListView):
+    template_name = 'users/employees/operator.html'
+    context_object_name = 'orders'
+    queryset = Order.objects.all()
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.status).select_related('orders').values(
+            'pk',
+            'product__title',
+            'stream',
+            'created_at',
+            'phone_number',
+            'name',
+            'quantity',
+            'stream__discount',
+            'product__price'
+        )
+
+
+class NewOrderListView(BaseOrderListView):
+    status = Order.Status.NEW
+
+
+class ReadyOrderListView(BaseOrderListView):
+    status = Order.Status.READY
+
+
+class DeliveryOrderListView(BaseOrderListView):
+    status = Order.Status.DELIVERY
+
+
+class DeliveredOrderListView(BaseOrderListView):
+    status = Order.Status.DELIVERED
+
+
+class CancelledOrderListView(BaseOrderListView):
+    status = Order.Status.CANCELLED
+
+
+class ArchivedOrderListView(BaseOrderListView):
+    status = Order.Status.ARCHIVED
+
+
+class MissedCallOrderListView(BaseOrderListView):
+    status = Order.Status.MISSED_CALL

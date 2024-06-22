@@ -1,4 +1,3 @@
-from django.apps import apps
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager
 
@@ -51,3 +50,11 @@ class ClientProxyManager(UserModelManager):
 
     def get_queryset(self):
         return super().get_queryset().filter(type=self.model.Type.CLIENT)
+
+
+class CourierProxyManager(UserModelManager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(type=self.model.Type.COURIER)
+
+

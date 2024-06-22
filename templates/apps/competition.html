@@ -1,4 +1,4 @@
-{% extends 'apps/base-window.html' %}
+{% extends 'apps/parts/base-window.html' %}
 
 {% block content %}
     <div class="card-group mt-2">
@@ -43,7 +43,7 @@
         <div class="card-body pt-0">
             <div class="tab-content">
                 <div class="tab-pane preview-tab-pane active" role="tabpanel"
-                     aria-labelledby="tab-dom-316cb649-6a3e-4ec3-9de8-7d83e880873f" 
+                     aria-labelledby="tab-dom-316cb649-6a3e-4ec3-9de8-7d83e880873f"
                      id="dom-316cb649-6a3e-4ec3-9de8-7d83e880873f">
                     <div id="tableExample"
                          data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
@@ -57,13 +57,13 @@
                                 </tr>
                                 </thead>
                                 <tbody class="list">
-                                {% for user in users %}
+                                {% for c_user in users %}
                                     <tr>
-                                        <td class="name">1</td>
-                                        <td class="email">{{ user.first_name }}</td>
-                                        <td class="age">{{ user.order_delivered_count }}</td>
+                                        <td class="name">{{ forloop.counter }}</td>
+                                        <td class="email">{{ c_user.first_name }}</td>
+                                        <td class="age">{{ c_user.order_delivered_count }}</td>
                                     </tr>
-                                    
+
                                 {% endfor %}
                                 </tbody>
                             </table>

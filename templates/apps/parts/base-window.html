@@ -17,15 +17,12 @@
     <meta name="msapplication-TileImage" content="{% static 'apps/assets/img/favicons/mstile-150x150.png' %}">
     <meta name="theme-color" content="#ffffff">
     <link href="{% static 'apps/vendors/swiper/swiper-bundle.min.css' %}" rel="stylesheet" />
-    
     <script src="{% static 'apps/assets/js/config.js' %}"></script>
     <script src="{% static 'apps/assets/js/lightbox.min.js' %}"></script>
     <script src="{% static 'apps/vendors/overlayscrollbars/OverlayScrollbars.min.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
-    
     <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
-
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
     <link href="{% static 'apps/vendors/overlayscrollbars/OverlayScrollbars.min.css' %}" rel="stylesheet">
@@ -52,8 +49,10 @@
             userLinkRTL.setAttribute('disabled', true);
         }
     </script>
-    {% block style %}
-    {% endblock %}
+    {% block style %}{% endblock %}
+    {% block back_css %}{% endblock %}
+    {% block login_bot_css %}{% endblock %}
+
 </head>
 <body>
 <main class="main" id="top">
@@ -98,20 +97,16 @@
 <script src="https://unpkg.com/imask"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js"></script>
-<script>
-    $('#phone-mask').inputmask({
-        "mask": "+\\9\\98(99) 999-99-99"
-    });
-    $('#messages-modal').modal('show');
-</script>
-
 
 
 
 {% block click_btn_js %}{% endblock %}
 {% block main_js %}{% endblock %}
 {% block stream_js %}{% endblock %}
-{% block format_number_js %}{% endblock %}
+{% block phone_number_js %}{% endblock %}
+{% block region_district_js %}{% endblock %}
+{% block request_status_js %}{% endblock %}
+
 </body>
 </html>
 

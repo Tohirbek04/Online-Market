@@ -1,17 +1,21 @@
 from django.urls import path
 
-from apps.views import (CategoryMarketProductView, ClickLikeView,
-                        CompetitionListView, LikeListView, MarketListView,
-                        OrderCreateView, OrderListView, OrderSuccessDetailView,
-                        ProductByCategoryListView, ProductDetailView,
-                        ProductListView, ProductStatisticsDetailView,
-                        StatisticsView, StreamCreateListView, StreamDetailView,
-                        TopProductListView)
+from apps.views import (ArchivedOrderListView, CancelledOrderListView,
+                        CategoryMarketProductView, ClickLikeView,
+                        CompetitionListView, DeliveryOrderListView,
+                        LikeListView, MarketListView, MissedCallOrderListView,
+                        NewOrderListView, OrderCreateView, OrderListView,
+                        OrderSuccessDetailView, ProductByCategoryListView,
+                        ProductDetailView, ProductListView,
+                        ProductStatisticsDetailView, ReadyOrderListView,
+                        RequestListView, StatisticsView, StreamCreateListView,
+                        TopProductListView, TransactionDetailView)
 
 urlpatterns = [
 
     path('', ProductListView.as_view(), name='product_list'),
     path('product/<slug:slug>', ProductDetailView.as_view(), name='product_detail'),
+    path('stream/<int:pk>', ProductDetailView.as_view(), name='stream_detail'),
     path('product/stats/<slug:slug>', ProductStatisticsDetailView.as_view(), name='product_stats'),
     path('top/product', TopProductListView.as_view(), name='top_product'),
 
@@ -30,10 +34,23 @@ urlpatterns = [
     path('status/success/<int:pk>', OrderSuccessDetailView.as_view(), name='status_success'),
 
     path('stream', StreamCreateListView.as_view(), name='stream'),
-    path('stream/<int:pk>', StreamDetailView.as_view(), name='stream_detail'),
 
     path('statistics', StatisticsView.as_view(), name='statistics'),
 
     path('competition', CompetitionListView.as_view(), name='competition'),
+
+    path('transaction', TransactionDetailView.as_view(), name='transaction'),
+
+    path('requests', RequestListView.as_view(), name='requests'),
+
+
+
+    path('operator/new', NewOrderListView.as_view(), name='new_orders'),
+    path('operator/ready', ReadyOrderListView.as_view(), name='ready_orders'),
+    path('operator/delivery', DeliveryOrderListView.as_view(), name='delivery_orders'),
+    path('operator/delivered', NewOrderListView.as_view(), name='delivered_orders'),
+    path('operator/cancelled', CancelledOrderListView.as_view(), name='cancelled_orders'),
+    path('operator/archived', ArchivedOrderListView.as_view(), name='archived_orders'),
+    path('operator/missed_call', MissedCallOrderListView.as_view(), name='missed_call_orders'),
 ]
 

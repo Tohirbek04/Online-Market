@@ -16,11 +16,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
             model_name='product',
             name='category',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apps.category'),
@@ -29,10 +24,5 @@ class Migration(migrations.Migration):
             model_name='product',
             name='like',
             field=models.ManyToManyField(to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='order',
-            name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apps.product'),
-        ),
+        )
     ]

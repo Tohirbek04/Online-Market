@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from django.db import migrations, models
-
+import django
 
 class Migration(migrations.Migration):
 
@@ -16,5 +16,49 @@ class Migration(migrations.Migration):
             model_name='product',
             name='like',
             field=models.ManyToManyField(blank=True, null=True, to=settings.AUTH_USER_MODEL),
+        ),
+
+        migrations.RemoveField(
+            model_name='product',
+            name='like',
+        ),
+        migrations.CreateModel(
+            name='LikeModel',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apps.product')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+
+        migrations.AlterField(
+            model_name='order',
+            name='product',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                    to='apps.product'),
+        ),
+        migrations.AlterField(
+            model_name='order',
+            name='user',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                    to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AlterField(
+            model_name='product',
+            name='image',
+            field=models.ImageField(upload_to='product/images'),
+        ),
+        migrations.CreateModel(
+            name='Stream',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=20)),
+                ('discount', models.IntegerField(default=0)),
+                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='streams',
+                                            to=settings.AUTH_USER_MODEL)),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='streams',
+                                              to='apps.product')),
+            ],
         ),
     ]

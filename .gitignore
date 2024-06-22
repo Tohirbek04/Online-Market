@@ -9,9 +9,11 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+**.mo**
+
 # AWS User-specific
 .idea/**/aws.xml
-
+media
 # Generated files
 .idea/**/contentModel.xml
 

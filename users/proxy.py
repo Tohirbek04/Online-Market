@@ -1,5 +1,6 @@
 from users.managers import (AdminProxyManager, ClientProxyManager,
-                            ManagerProxyManager, OperatorProxyManager)
+                            CourierProxyManager, ManagerProxyManager,
+                            OperatorProxyManager)
 from users.models import User
 
 
@@ -37,3 +38,14 @@ class AdminProxyModel(User):
         proxy = True
         verbose_name = 'Admin'
         verbose_name_plural = 'Admins'
+
+
+class CourierProxyModel(User):
+    objects = CourierProxyManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = 'Courier'
+        verbose_name_plural = 'Couriers'
+
+

@@ -1,0 +1,133 @@
+{% extends "admin/change_list.html" %}
+{% load humanize %}
+
+{% block content_title %}
+    <h1> User Balance Report </h1>
+{% endblock %}
+{% block result_list %}
+    <div class="results">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <div class="text">
+                            <a href="#">Status</a>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="text">
+                            <a href="#">Real Balance</a>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="text">
+                            <a href="#">Expected Balance</a>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="{% cycle 'row1' 'row2' %}">
+                    <td>Operators</td>
+                    <td> {{ operator_real_balance }} UZS</td>
+                    <td> {{ operator_possibly_balance }} UZS</td>
+                </tr>
+                <tr class="{% cycle 'row1' 'row2' %}">
+                    <td>Users</td>
+                    <td>{{ referral_user_real_balance | intcomma }} UZS</td>
+                    <td>{{ referral_user_possibly_balance | intcomma }} UZS</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr style="font-weight: bold; border-top: 2px solid #DDDDDD;">
+                    <td>Total</td>
+                    <td>{{ total_real_balance | intcomma }} UZS</td>
+                    <td>{{ total_possibly_balance | intcomma }} UZS</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div style="display: flex; justify-content: space-around;">
+        <!-- First Pie Chart - Current Balance -->
+        <div>
+            <h2>Real Balance</h2>
+            <div style="width: 250px; height: 250px;">
+                <canvas id="currentBalanceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Second Pie Chart - Possible Balance -->
+        <div>
+            <h2>Expected Balance</h2>
+            <div style="width: 250px; height: 250px;">
+                <canvas id="possibleBalanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Current Balance Chart
+            var ctx1 = document.getElementById('currentBalanceChart').getContext('2d');
+            var currentBalanceChart = new Chart(ctx1, {
+                type: 'pie',
+                data: {
+                    labels: ['Operators', 'Users'],
+                    datasets: [{
+                        data: [{{ operator_real_balance }}, {{referral_user_real_balance  }}],
+                        backgroundColor: ['#ff0000', '#3669eb']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString() + ' UZS';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Possible Balance Chart
+            var ctx2 = document.getElementById('possibleBalanceChart').getContext('2d');
+            var possibleBalanceChart = new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: ['Operators', 'Users'],
+                    datasets: [{
+                        data: [{{ operator_possibly_balance }}, {{ referral_user_possibly_balance }}],
+                        backgroundColor: ['#ffc950', '#5fc04b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString() + ' UZS';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block pagination %}{% endblock %}

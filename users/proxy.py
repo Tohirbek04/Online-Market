@@ -1,3 +1,5 @@
+from django.db.models import OneToOneField, CASCADE
+from django.utils.translation import gettext_lazy as _
 from users.managers import (AdminProxyManager, ClientProxyManager,
                             CourierProxyManager, ManagerProxyManager,
                             OperatorProxyManager)
@@ -49,3 +51,8 @@ class CourierProxyModel(User):
         verbose_name_plural = 'Couriers'
 
 
+class ReportProxy(User):
+    class Meta:
+        proxy = True
+        verbose_name = _('User balance report')
+        verbose_name_plural = _('User balance reports')

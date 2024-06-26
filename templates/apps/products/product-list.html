@@ -75,13 +75,15 @@
                                     class="fa fa-star text-300"></span><span class="ms-1">(8)</span>
                             </div>
                             <div>
-                                <a href="{% url 'click_like' product.pk %}"
-                                   style="text-decoration: none; color: inherit;">
-                                    <span style="position: relative;">
-                                            <i class="fas fa-heart"
-                                               style="color: {% if product.is_liked %}red{% endif %}; margin-left: 10px; font-size: 15px;"></i>
-                                    </span>
-                                </a>
+                                {% if user %}
+                                    <a href="{% url 'click_like' product.pk %}"
+                                       style="text-decoration: none; color: inherit;">
+                                        <span style="position: relative;">
+                                                <i class="fas fa-heart"
+                                                   style="color: {% if product.is_liked %}red{% endif %}; margin-left: 10px; font-size: 15px;"></i>
+                                        </span>
+                                    </a>
+                                {% endif %}
                                 <a class="btn btn-sm btn-falcon-default"
                                    href="{% url 'product_detail' product.slug %}" data-bs-toggle="tooltip"
                                    data-bs-placement="top" title="Add to Cart">

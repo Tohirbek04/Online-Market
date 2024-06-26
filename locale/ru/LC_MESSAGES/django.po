@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-26 18:00+0500\n"
+"POT-Creation-Date: 2024-06-28 18:46+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,42 +20,183 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
+#: apps/admin.py:174
+msgid "New Orders"
+msgstr ""
+
+#: apps/admin.py:175
+msgid "Ready Orders"
+msgstr ""
+
+#: apps/admin.py:176
+msgid "Delivery Orders"
+msgstr ""
+
+#: apps/admin.py:177 apps/proxy.py:52
+msgid "Delivered Orders"
+msgstr ""
+
+#: apps/admin.py:178 apps/proxy.py:61
+msgid "Cancelled Orders"
+msgstr ""
+
+#: apps/admin.py:179 apps/proxy.py:79
+msgid "Missed Call Orders"
+msgstr ""
+
+#: apps/admin.py:180 apps/proxy.py:70
+msgid "Archived Orders"
+msgstr ""
+
+#: apps/admin.py:181
+msgid "History Orders"
+msgstr ""
+
+#: apps/admin.py:182 apps/proxy.py:88
+msgid "Processes Transactions"
+msgstr ""
+
+#: apps/admin.py:183 apps/proxy.py:97
+msgid "Paid Transactions"
+msgstr ""
+
+#: apps/admin.py:184 apps/proxy.py:106
+msgid "Cancelled Transactions"
+msgstr ""
+
+#: apps/admin.py:185 apps/proxy.py:115
+msgid "Operator Transactions"
+msgstr ""
+
+#: apps/admin.py:186 apps/proxy.py:124
+msgid "Client Transactions"
+msgstr ""
+
+#: apps/admin.py:187
+msgid "Streams"
+msgstr ""
+
+#: apps/admin.py:188
+msgid "Likes"
+msgstr ""
+
+#: apps/admin.py:189
+msgid "Categories"
+msgstr ""
+
+#: apps/admin.py:190
+msgid "Products"
+msgstr ""
+
+#: apps/admin.py:191
+msgid "Competitions"
+msgstr ""
+
+#: apps/admin.py:192
+msgid "Site Settings"
+msgstr ""
+
 #: apps/proxy.py:51
-msgid "Order Delivered"
+msgid "Delivered Order"
 msgstr ""
 
-#: apps/proxy.py:59
-msgid "Order Cancelled"
+#: apps/proxy.py:60
+msgid "Cancelled Order"
 msgstr ""
 
-#: apps/proxy.py:67
-msgid "Order Archived"
+#: apps/proxy.py:69
+msgid "Archived Order"
 msgstr ""
 
-#: apps/proxy.py:76
-msgid "Order MissedCalls"
+#: apps/proxy.py:78
+msgid "Missed Call Order"
 msgstr ""
 
-#: root/settings.py:100
+#: apps/proxy.py:87
+msgid "Process Transaction"
+msgstr ""
+
+#: apps/proxy.py:96
+msgid "Paid Transaction"
+msgstr ""
+
+#: apps/proxy.py:105
+msgid "Cancelled Transaction"
+msgstr ""
+
+#: apps/proxy.py:114
+msgid "Operator Transaction"
+msgstr ""
+
+#: apps/proxy.py:123
+msgid "Client Transaction"
+msgstr ""
+
+#: root/settings.py:99
 msgid "Uzbek"
 msgstr ""
 
-#: root/settings.py:101
+#: root/settings.py:100
 msgid "English"
 msgstr ""
 
-#: root/settings.py:102
+#: root/settings.py:101
 msgid "Russian"
 msgstr ""
 
-#: users/admin.py:15
+#: templates/admin/index.html:7 templates/admin/index.html:12
+msgid "Dashboard"
+msgstr ""
+
+#: templates/admin/index.html:11
+msgid "Home"
+msgstr ""
+
+#: templates/admin/index.html:94
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:98
+msgid "View"
+msgstr ""
+
+#: templates/admin/index.html:100
+msgid "Go"
+msgstr ""
+
+#: templates/admin/index.html:100
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:125
+msgid "Recent actions"
+msgstr ""
+
+#: templates/admin/index.html:129
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:143
+#, python-format
+msgid "%(timesince)s ago"
+msgstr ""
+
+#: users/admin.py:18
 msgid "Personal info"
 msgstr ""
 
-#: users/admin.py:16
+#: users/admin.py:19
 msgid "Important dates"
 msgstr ""
 
-#: users/admin.py:17
+#: users/admin.py:20
 msgid "My photo"
+msgstr ""
+
+#: users/proxy.py:57
+msgid "User balance report"
+msgstr ""
+
+#: users/proxy.py:58
+msgid "User balance reports"
 msgstr ""

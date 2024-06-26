@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import (CASCADE, BigIntegerField, CharField, ForeignKey,
                               ImageField, IntegerField, Model, SlugField, Sum,
-                              TextChoices)
+                              TextChoices, TimeField, OneToOneField)
 from django.template.defaultfilters import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -67,8 +67,9 @@ class User(AbstractUser):
     def get_paid_balance(self):
         return self.transaction_set.filter(status='paid').aggregate(summa=Sum('amount'))['summa']
 
-# class Profile(Model):
-#     user = OneToOneField('apps.User', CASCADE)
-#     from_working_time = ''
-#     to_working_time = ''
-#     passport = ''
+
+class Account(Model):
+    operator = OneToOneField('users.User', CASCADE, limit_choices_to={'type': User.Type.OPERATOR})
+    from_working_time = TimeField('operator ishga kelish vaqati')
+    to_working_time = TimeField('operator ishdan ketish vaqti')
+    passport = CharField(max_length=9)

@@ -1,32 +1,6 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>
-        Operatorlar bo'limi - Dostavkaga tayyor - alijahon.uz</title>
-    <link rel="stylesheet" href="{% static 'apps/operator/bootstrap.css' %}">
-    <link rel="stylesheet" href="{% static 'apps/operator/font-awesome.min.css' %}">
-    <link href="https://unpkg.com/multiple-select@1.5.2/dist/multiple-select.min.css" rel="stylesheet">
-    <style>
-        select {
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-<div>
-    <nav class="navbar navbar-dark bg-dark text-white" style="height: 10%;">
-        <div>Buyurtmalar</div>
-        <h4>ID: 721 </h4>
-        <a href="/admin_page" class="btn btn-danger btn-sm">Asosiy panel</a>
-    </nav>
-    <div class="row">
-        {% include 'users/operator_parts/left-sidebar.html' %}
-        <div class="col-md-10" style="margin-left: 16%;">
-            <div class="bg-light w-75 m-auto mt-5">
-                {% include 'users/operator_parts/header.html' %}
-                <form method="POST" action="/operator/currier_page">
+{% include 'apps/operator/operator_parts/operator-base.html' %}
+{% block content %}
+    <form method="POST" action="/operator/currier_page">
                     <input type="hidden" name="csrfmiddlewaretoken"
                            value="gXcdHXlK6E0voxMLBw9bhKVZjmOKzibrYs6JRibz91qBDxGMHDH6s6gBdU2idNaa">
 
@@ -3398,52 +3372,4 @@
                         </div>
                     </div>
                 </form>
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-
-
-                        <li class="page-item"><a class="page-link " href="?page=1">1</a></li>
-
-
-                        <li class="page-item"><a class="page-link " href="?page=2">2</a></li>
-
-
-                        <li class="page-item"><a class="page-link " href="?page=3">3</a></li>
-
-
-                        <li class="page-item"><a class="page-link " href="?page=4">4</a></li>
-
-
-                        <li class="page-item"><a class="page-link" href="?page=2">Keyingisi</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-<script src="https://unpkg.com/multiple-select@1.5.2/dist/multiple-select.min.js"></script>
-<script src="/static/app/js/regions_filter.js"></script>
-<script>
-    $(function () {
-        $('select').multipleSelect({
-            multiple: true,
-            multipleWidth: 500,
-            maxHeight: 200,
-            maxHeightUnit: 50,
-            filter: true
-        })
-    })
-</script>
-<script>
-    function toggle(source) {
-        checkboxes = document.getElementsByName('orders');
-        for (var i = 0, n = checkboxes.length; i < n; i++) {
-            console.log('askar')
-            checkboxes[i].checked = source.checked;
-        }
-    }
-</script>
-</body>
-</html>
+{% endblock %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-26 18:00+0500\n"
+"POT-Creation-Date: 2024-06-28 18:46+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,44 +18,190 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: apps/proxy.py:51
-msgid "Order Delivered"
+#: apps/admin.py:174
+msgid "New Orders"
 msgstr ""
 
-#: apps/proxy.py:59
-msgid "Order Cancelled"
-msgstr "Bekor qilingan Buyurtma"
+#: apps/admin.py:175
+msgid "Ready Orders"
+msgstr ""
 
-#: apps/proxy.py:67
-msgid "Order Archived"
-msgstr "Arxivlangan buyurtma"
+#: apps/admin.py:176
+msgid "Delivery Orders"
+msgstr ""
 
-#: apps/proxy.py:76
+#: apps/admin.py:177 apps/proxy.py:52
+msgid "Delivered Orders"
+msgstr ""
+
+#: apps/admin.py:178 apps/proxy.py:61
+msgid "Cancelled Orders"
+msgstr ""
+
+#: apps/admin.py:179 apps/proxy.py:79
 #, fuzzy
 #| msgid "Order Cancelled"
-msgid "Order MissedCalls"
+msgid "Missed Call Orders"
 msgstr "Bekor qilingan Buyurtmalar"
 
-#: root/settings.py:100
+#: apps/admin.py:180 apps/proxy.py:70
+msgid "Archived Orders"
+msgstr ""
+
+#: apps/admin.py:181
+msgid "History Orders"
+msgstr ""
+
+#: apps/admin.py:182 apps/proxy.py:88
+msgid "Processes Transactions"
+msgstr ""
+
+#: apps/admin.py:183 apps/proxy.py:97
+msgid "Paid Transactions"
+msgstr ""
+
+#: apps/admin.py:184 apps/proxy.py:106
+msgid "Cancelled Transactions"
+msgstr ""
+
+#: apps/admin.py:185 apps/proxy.py:115
+msgid "Operator Transactions"
+msgstr ""
+
+#: apps/admin.py:186 apps/proxy.py:124
+msgid "Client Transactions"
+msgstr ""
+
+#: apps/admin.py:187
+msgid "Streams"
+msgstr "Oqimlar"
+
+#: apps/admin.py:188
+msgid "Likes"
+msgstr ""
+
+#: apps/admin.py:189
+msgid "Categories"
+msgstr ""
+
+#: apps/admin.py:190
+msgid "Products"
+msgstr ""
+
+#: apps/admin.py:191
+msgid "Competitions"
+msgstr "Konkurs"
+
+#: apps/admin.py:192
+msgid "Site Settings"
+msgstr ""
+
+#: apps/proxy.py:51
+msgid "Delivered Order"
+msgstr ""
+
+#: apps/proxy.py:60
+#, fuzzy
+#| msgid "Order Cancelled"
+msgid "Cancelled Order"
+msgstr "Bekor qilingan Buyurtma"
+
+#: apps/proxy.py:69
+msgid "Archived Order"
+msgstr ""
+
+#: apps/proxy.py:78
+msgid "Missed Call Order"
+msgstr ""
+
+#: apps/proxy.py:87
+msgid "Process Transaction"
+msgstr "Jarayondagi Utkazmalar"
+
+#: apps/proxy.py:96
+msgid "Paid Transaction"
+msgstr "To'langan Utkazmalar"
+
+#: apps/proxy.py:105
+msgid "Cancelled Transaction"
+msgstr "Bekor qilingan Utkazmalar"
+
+#: apps/proxy.py:114
+msgid "Operator Transaction"
+msgstr "Operator Pul utkazmalari"
+
+#: apps/proxy.py:123
+msgid "Client Transaction"
+msgstr "Klint Pul utkazmalari"
+
+#: root/settings.py:99
 msgid "Uzbek"
 msgstr "Uzbek"
 
-#: root/settings.py:101
+#: root/settings.py:100
 msgid "English"
 msgstr "Engilizcha"
 
-#: root/settings.py:102
+#: root/settings.py:101
 msgid "Russian"
 msgstr "Ruscha"
 
-#: users/admin.py:15
+#: templates/admin/index.html:7 templates/admin/index.html:12
+msgid "Dashboard"
+msgstr "Bosh Sahifa"
+
+#: templates/admin/index.html:11
+msgid "Home"
+msgstr "Uy"
+
+#: templates/admin/index.html:94
+msgid "Add"
+msgstr "Qo'shish"
+
+#: templates/admin/index.html:98
+msgid "View"
+msgstr ""
+
+#: templates/admin/index.html:100
+msgid "Go"
+msgstr ""
+
+#: templates/admin/index.html:100
+msgid "Change"
+msgstr "O'zgartirish"
+
+#: templates/admin/index.html:125
+msgid "Recent actions"
+msgstr ""
+
+#: templates/admin/index.html:129
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:143
+#, python-format
+msgid "%(timesince)s ago"
+msgstr ""
+
+#: users/admin.py:18
 msgid "Personal info"
 msgstr "Shaxsiy malumotlar"
 
-#: users/admin.py:16
+#: users/admin.py:19
 msgid "Important dates"
 msgstr "Muhim sanalar"
 
-#: users/admin.py:17
+#: users/admin.py:20
 msgid "My photo"
 msgstr "Mening Rasmim"
+
+#: users/proxy.py:57
+msgid "User balance report"
+msgstr "Userlarning Balans Hisoboti"
+
+#: users/proxy.py:58
+msgid "User balance reports"
+msgstr "Userlarning Balans Hisobotlari"
+
+#~ msgid "Order Archived"
+#~ msgstr "Arxivlangan buyurtma"

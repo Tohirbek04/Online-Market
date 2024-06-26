@@ -50,7 +50,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.template.context_processors.i18n',
-                'apps.context_processor.site_settings',
+                # 'apps.context_processor.site_settings',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -93,7 +93,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uz'
 
 LANGUAGES = (
     ('uz', _('Uzbek')),
@@ -238,27 +238,27 @@ CKEDITOR_5_CONFIGS = {
 
 LOGIN_URL = '/login'
 
-LOGGING = {
-    'version': 1,
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        }
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-        }
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        }
-    }
-}
+# LOGGING = {
+#     'version': 1,
+#     'filters': {
+#         'require_debug_true': {
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         }
+#     },
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'filters': ['require_debug_true'],
+#             'class': 'logging.StreamHandler',
+#         }
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['console'],
+#         }
+#     }
+# }
 
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
@@ -271,10 +271,10 @@ JAZZMIN_SETTINGS = {
     "site_brand": "WEB",
 
     # Logo to use for your site, must be present in static files, used for brand on top left
-    "site_logo": "books/img/logo.png",
+    "site_logo": "apps/images/logo.jpg",
 
     # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
-    "login_logo": "",
+    "login_logo": "apps/images/logo.jpg",
 
     # Logo to use for login form in dark themes (defaults to login_logo)
     "login_logo_dark": "",
@@ -368,7 +368,7 @@ JAZZMIN_SETTINGS = {
     "default_icon_children": "fas fa-circle",
     "related_modal_active": False,
     "custom_css": None,
-    "custom_js": None,
+    "custom_js": "apps/custom/main.js",
     "use_google_fonts_cdn": True,
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",
@@ -376,7 +376,6 @@ JAZZMIN_SETTINGS = {
     "language_chooser": True,
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 AWS_S3_ENDPOINT_URL = 'http://localhost:9000'

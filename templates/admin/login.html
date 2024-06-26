@@ -1,0 +1,107 @@
+{% extends "admin/login.html" %}
+{% block content %}
+   <style>
+            .login-logo img {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                border: 2px solid #ddd;
+                object-fit: cover;
+                transition: transform 0.3s;
+            }
+
+            .login-logo img:hover {
+                transform: scale(1.1);
+            }
+            
+            .login-box-msg {
+                font-size: 1.2em;
+                margin-bottom: 20px;
+                text-align: center;
+                font-family: 'Comic Sans MS', cursive, sans-serif;
+                color: #ffeb3b;
+                text-shadow: 2px 2px #ff4081;
+            }
+
+            .form-control {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 2px solid #ffeb3b;
+                color: white;
+                border-radius: 20px;
+            }
+            
+            .form-control::placeholder {
+                color: rgba(255, 255, 255, 0.6);
+            }
+            
+            .input-group-text {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 2px solid #ffeb3b;
+                color: white;
+                border-radius: 20px;
+            }
+            
+            .btn-primary {
+                background-color: #ff4081;
+                border: none;
+                transition: background-color 0.3s, transform 0.3s;
+                border-radius: 20px;
+            }
+            
+            .btn-primary:hover {
+                background-color: #ffeb3b;
+                color: #ff4081;
+                transform: scale(1.05);
+            }
+            
+            .card {
+                background-color: rgba(0, 0, 0, 0.8);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                border-radius: 20px;
+            }
+
+            .card-body {
+                border-radius: 15px;
+            }
+        </style>
+        
+    
+    {{ block.super }}
+    <p>Please enter the correct phone and password for a staff account. Note that both fields may be case-sensitive.</p>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js"></script>
+    <script>
+        jQuery(document).ready(function ($) {
+            // Apply input mask for the phone number input field
+            $('form > .input-group:first > input:first').inputmask({
+                "mask": "+\\9\\98(99) 999-99-99"
+            });
+        });
+
+        $(document).ready(function () {
+            // Handle form submission
+            $('form').submit(function (event) {
+                // Prevent the form from submitting
+                event.preventDefault();
+
+                // Get the phone number input value
+                var phoneInput = $('form > .input-group:first > input:first').val();
+
+                // Modify the input value to remove the country code and any non-digit characters
+                var modifiedPhoneInput = phoneInput.replace(/^\+998|\D/g, '');
+
+                // Set the modified value back to the input field
+                var newInput = $('<input>').attr({
+                    type: 'hidden',
+                    name: 'username',
+                    value: modifiedPhoneInput
+                });
+                // Append the new input element to the form
+                $(this).append(newInput);
+                // Now unbind the submit event handler and submit the form
+                $(this).unbind('submit').submit();
+            });
+        });
+    </script>
+{% endblock %}

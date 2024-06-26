@@ -1,0 +1,74 @@
+{# templates/jazzmin/app_list.html #}
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static jazzmin %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% block content %}
+    <style>
+    /* static/css/custom_admin.css */
+
+.app-list {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.app-card {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.app-card h2 {
+    margin-top: 0;
+}
+
+.app-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.app-card ul li {
+    margin-bottom: 5px;
+}
+
+.app-card ul li a {
+    text-decoration: none;
+}
+
+.app-card ul li a.add-link {
+    margin-left: 10px;
+    color: #28a745;
+}
+
+.app-card ul li a.add-link:hover {
+    color: #218838;
+}
+
+    </style>
+    
+<div class="app-list">
+    <h1>{% block title %}{% trans "Site administration" %}{% endblock %}</h1>
+    {% block breadcrumbs %}{% endblock %}
+    {% block content-title %}{% endblock %}
+
+    <div class="app-list-content">
+        {% for app in app_list %}
+            <div class="app-card">
+                <h2>{{ app.name }}</h2>
+                <ul>
+                    {% for model in app.models %}
+                        <li>
+                            <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                            {% if model.add_url %}
+                                <a class="add-link" href="{{ model.add_url }}" title="{% trans 'Add' %}"><i class="fas fa-plus-circle"></i></a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

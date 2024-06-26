@@ -12,8 +12,8 @@ from apps.models import Order, Transaction
 class OrderHistoryProxyModel(Order):
     class Meta:
         proxy = True
-        verbose_name = 'Order History'
-        verbose_name_plural = 'Order Histories'
+        verbose_name = 'History Order'
+        verbose_name_plural = 'History Orders'
 
 
 class NewOrderProxyModel(Order):
@@ -21,8 +21,8 @@ class NewOrderProxyModel(Order):
 
     class Meta:
         proxy = True
-        verbose_name = 'Order New'
-        verbose_name_plural = 'Order News'
+        verbose_name = 'New Order'
+        verbose_name_plural = 'New Orders'
 
 
 class ReadyOrderProxyModel(Order):
@@ -30,8 +30,8 @@ class ReadyOrderProxyModel(Order):
 
     class Meta:
         proxy = True
-        verbose_name = 'Order Ready'
-        verbose_name_plural = 'Order Ready'
+        verbose_name = ' Ready Order'
+        verbose_name_plural = 'Ready Orders'
 
 
 class DeliveryOrderProxyModel(Order):
@@ -39,8 +39,8 @@ class DeliveryOrderProxyModel(Order):
 
     class Meta:
         proxy = True
-        verbose_name = 'Order Delivery'
-        verbose_name_plural = 'Order Delivery'
+        verbose_name = 'Delivery Order'
+        verbose_name_plural = 'Delivery Orders'
 
 
 class DeliveredOrderProxyModel(Order):
@@ -48,7 +48,8 @@ class DeliveredOrderProxyModel(Order):
 
     class Meta:
         proxy = True
-        verbose_name = _('Order Delivered')
+        verbose_name = _('Delivered Order')
+        verbose_name_plural = _('Delivered Orders')
 
 
 class CancelledOrderProxyModel(Order):
@@ -56,7 +57,8 @@ class CancelledOrderProxyModel(Order):
 
     class Meta:
         proxy = True
-        verbose_name = _('Order Cancelled')
+        verbose_name = _('Cancelled Order')
+        verbose_name_plural = _('Cancelled Orders')
 
 
 class ArchivedOrderProxyModel(Order):
@@ -64,7 +66,8 @@ class ArchivedOrderProxyModel(Order):
 
     class Meta:
         proxy = True
-        verbose_name = _('Order Archived')
+        verbose_name = _('Archived Order')
+        verbose_name_plural = _('Archived Orders')
 
 
 class MissedCallOrderProxyModel(Order):
@@ -72,8 +75,8 @@ class MissedCallOrderProxyModel(Order):
 
     class Meta:
         proxy = True
-        verbose_name = 'Order MissedCall'
-        verbose_name_plural = _('Order MissedCalls')
+        verbose_name = _('Missed Call Order')
+        verbose_name_plural = _('Missed Call Orders')
 
 
 class TransactionProcessProxyModel(Transaction):
@@ -81,8 +84,8 @@ class TransactionProcessProxyModel(Transaction):
 
     class Meta:
         proxy = True
-        verbose_name = 'Transaction Process'
-        verbose_name_plural = 'Transaction Processes'
+        verbose_name = _('Process Transaction')
+        verbose_name_plural = _('Processes Transactions')
 
 
 class TransactionPaidProxyModel(Transaction):
@@ -90,7 +93,8 @@ class TransactionPaidProxyModel(Transaction):
 
     class Meta:
         proxy = True
-        verbose_name = 'Transaction Paid'
+        verbose_name = _('Paid Transaction')
+        verbose_name_plural = _('Paid Transactions')
 
 
 class TransactionCancelledProxyModel(Transaction):
@@ -98,7 +102,8 @@ class TransactionCancelledProxyModel(Transaction):
 
     class Meta:
         proxy = True
-        verbose_name = 'Transaction Cancelled'
+        verbose_name = _('Cancelled Transaction')
+        verbose_name_plural = _('Cancelled Transactions')
 
 
 class OperatorTransactionProxyModel(Transaction):
@@ -106,8 +111,8 @@ class OperatorTransactionProxyModel(Transaction):
 
     class Meta:
         proxy = True
-        verbose_name = 'Transaction Operator'
-
+        verbose_name = _('Operator Transaction')
+        verbose_name_plural = _('Operator Transactions')
 
 
 class ClientTransactionProxyModel(Transaction):
@@ -115,4 +120,5 @@ class ClientTransactionProxyModel(Transaction):
 
     class Meta:
         proxy = True
-        verbose_name = 'Transaction Client'
+        verbose_name = _('Client Transaction')
+        verbose_name_plural = _('Client Transactions')

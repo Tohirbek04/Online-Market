@@ -7,6 +7,7 @@ from root.settings import MEDIA_ROOT, MEDIA_URL, STATIC_ROOT, STATIC_URL
 
 urlpatterns = i18n_patterns(
     path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path("ckeditor5/", include('django_ckeditor_5.urls')),
     path('', include('apps.urls')),
     path('i18n/', include('django.conf.urls.i18n')),

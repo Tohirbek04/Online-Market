@@ -1,6 +1,6 @@
 from django.db.models import (CASCADE, SET_NULL, BooleanField, CharField,
                               DateTimeField, ForeignKey, ImageField,
-                              IntegerField, Model, SlugField, TextChoices, CheckConstraint, Q, F)
+                              IntegerField, Model, SlugField, TextChoices)
 from django.template.defaultfilters import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -11,6 +11,10 @@ class Category(Model):
     image = ImageField(upload_to='category/', null=True, blank=True)
     name = CharField(max_length=30, unique=True)
     slug = SlugField(max_length=30, editable=False)
+
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -85,12 +89,13 @@ class Order(Model):
             _user = self.referral_user
             _user.balance += (self.product.extra_balance - self.stream.discount) * self.quantity
             _user.save()
-        # if self.status == self.Status.DELIVERED and self.operator:
-        #     self.operator.balance += site.operator_sum
-        #     self.operator.save()
-        # if self.status == self.Status.DELIVERED and self.courier:
-        #     self.courier.balance += site.shopping_cost
-        #     self.courier.save()
+        if self.status == self.Status.DELIVERED and self.operator:
+            self.operator.refresh_from_db()
+            self.operator.balance += site.operator_sum
+            self.operator.save()
+        if self.status == self.Status.DELIVERED and self.courier:
+            self.courier.balance += site.shopping_cost
+            self.courier.save()
         super().save(force_insert, force_update, using, update_fields)
 
     @property
@@ -158,6 +163,7 @@ class Transaction(Model):
     chek = ImageField(upload_to='apps/transaction', null=True, blank=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.user.balance -= self.amount
-        self.user.save()
+        if not self.pk and self.status == self.Status.PROCESS:
+            self.user.balance -= self.amount
+            self.user.save()
         super().save(force_insert, force_update, using, update_fields)

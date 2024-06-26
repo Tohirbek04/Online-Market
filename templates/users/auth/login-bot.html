@@ -91,7 +91,7 @@
     </form>
 {% endblock %}
 
-{% block script %}
+{% block main_js %}
     <script>
         const codes = document.querySelectorAll(".code");
         const errorMessage = document.getElementById("error-message");
@@ -117,12 +117,10 @@
 
             if (allFilled) {
                 const code = Array.from(inputs).map(input => input.value).join('');
-
                 loadingSpinner.style.display = 'block';
-
                 $.ajax({
                     type: "POST",
-                    url: 'http://localhost:8000/login-check',
+                    url: 'http://localhost:8000/en/login-check ',
                     data: {
                         code: code,
                         csrfmiddlewaretoken: '{{ csrf_token }}'
@@ -132,7 +130,7 @@
                     },
                     error: (err) => {
                         loadingSpinner.style.display = 'none';
-                        errorMessage.textContent = 'Error: ' + err.responseText;
+                        errorMessage.textContent = 'Error: niadir hato' + err.responseText;
                         inputs.forEach(input => input.value = "");
                         codes[0].focus();
                     }

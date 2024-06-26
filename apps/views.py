@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q, Sum, OuterRef, Case, BooleanField, When, Subquery, Exists
+from django.db.models import Count, Q, Sum, OuterRef, Exists
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -20,7 +20,8 @@ class BaseProductListView(ListView):
     queryset = Product.objects.select_related('category')
 
     def get_queryset(self):
-        user_has_liked_subquery = LikeModel.objects.filter(user=self.request.user, product=OuterRef('pk'))
+        if self.request.user:
+            user_has_liked_subquery = LikeModel.objects.filter(user=self.request.user.id, product=OuterRef('pk'))
         return super().get_queryset().annotate(is_liked=Exists(user_has_liked_subquery))
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -370,7 +371,6 @@ class RequestListView(ListView):
 
 
 class BaseOrderListView(OperatorRequiredMixin, ListView):
-    template_name = 'users/employees/operator.html'
     context_object_name = 'orders'
     queryset = Order.objects.all()
 
@@ -389,6 +389,7 @@ class BaseOrderListView(OperatorRequiredMixin, ListView):
 
 
 class NewOrderListView(BaseOrderListView):
+    template_name = 'apps/operator/status/operator-delivery-page.html'
     status = Order.Status.NEW
 
 

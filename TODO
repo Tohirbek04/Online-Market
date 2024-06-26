@@ -28,15 +28,16 @@ Task
     2) operator bolgan holatda (har bir operator uchun yetkazilgan tovarga 3000 som qoshish, 3000 ni adminkadan sitesettings orqali olinadi)])
     3) tulov qilingandan sung chekni ham chiqarib berish ✅
 django-debug-toolbar ✅
+22 i18 ✅
+adminkada login qilishda phone numberni chiroyli qilish ✅
+22. yetkazilmoqda -> yetkazildi
+23. Transaction modelda yetkazilmoqda -> yetkazildi
 
-
-22 i18
-adminkada login qilishda phone numberni chiroyli qilish
 from_working_time to_working_time passport shu fiedlar faqat operator da bulish kerak one two one bulish kerak accountdan
+
 Prefetch() ❓
 
 
-# yetkazilmoqda -> yetkazildi
 
 
 

@@ -1,9 +1,9 @@
 import re
 
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from django.forms import CharField, ModelChoiceField, ModelForm, PasswordInput, Form
+from django.forms import CharField, ModelChoiceField, ModelForm, PasswordInput
 
 from users.models import District, Region, User
 

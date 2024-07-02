@@ -1,0 +1,62 @@
+{% extends 'apps/operator/operator-base.html' %}
+{% load static %}
+{% load humanize %}
+{% block status_content %}
+    <div class="col-md-10" style="margin-left: 16%;">
+        <div class="bg-light w-75 m-auto mt-5">
+            <form method="GET">
+                <div>
+                    <p>
+                        <label for="id_product">Mahsulot:</label>
+                        <select name="product" id="id_product" multiple>
+                            {% for order in cancelled %}
+                                <option value="">{{ order.product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p>
+                        <label for="id_location">Viloyat:</label>
+                        <select name="location" id="id_location" multiple>
+                            <option value="Viloyatni tanlang">Viloyatni tanlang</option>
+                            {% for region in regions %}
+                                <option value="{{ region.name }}">{{ region.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p>
+                        <label for="id_region">Tuman:</label>
+                        <select name="district" id="id_district" multiple>
+                            {#                            {% for district in districts %}#}
+                            {#                                <option value="">{{ district.name }}</option>#}
+                            {#                            {% endfor %}#}
+                        </select>
+                    </p>
+                    <p>
+                        <label for="id_name">Mahsulot nomi:</label>
+                        <input type="text" name="name" id="id_name">
+                    </p>
+                </div>
+                <input class="btn btn-primary" type="submit" value="Saqlash">
+            </form>
+            {% for order in orders %}
+                <div class="card border-dark mt-5">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ order.product__title }}</h2>
+                        <ul class="text-muted">
+                            <li class="">ID: #{{ order.pk }}</li>
+                            <li class="">Client: {{ order.name }}</li>
+                            <li class="">Narxi: {{ order.product__price|intcomma }} so'm
+                                <strong>- {{ order.stream__discount|default_if_none:"0"|intcomma }}</strong> so'm
+                            </li>
+                            <li class="">Soni: {{ order.quantity }}ta</li>
+                            <li class="">Vaqti: {{ order.created_at|date:"Y-m-d" }}</li>
+                            <li class="">Yangilangan vaqti: {{ order.updated_at|date:"Y-m-d" }}</li>
+                            <li class="">Status: {{ order.status }}</li>
+                        </ul>
+                        <a href="{% url 'order_change' order.pk %}" class="btn btn-primary">Holatini o'zgartirish</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

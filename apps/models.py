@@ -1,6 +1,6 @@
 from django.db.models import (CASCADE, SET_NULL, BooleanField, CharField,
                               DateTimeField, ForeignKey, ImageField,
-                              IntegerField, Model, SlugField, TextChoices)
+                              IntegerField, Model, SlugField, TextChoices, DateField)
 from django.template.defaultfilters import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -79,6 +79,8 @@ class Order(Model):
     region = CharField(max_length=30, null=True, blank=True)
     operator = ForeignKey('users.User', SET_NULL, null=True, blank=True, related_name='operator',
                           limit_choices_to={'type': User.Type.OPERATOR})
+    send_order_date = DateField(null=True, blank=True)
+    location = CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -95,16 +97,19 @@ class Order(Model):
             self.operator.save()
         if self.status == self.Status.DELIVERED and self.courier:
             self.courier.balance += site.shopping_cost
+            self.courier.refresh_from_db()
             self.courier.save()
         super().save(force_insert, force_update, using, update_fields)
 
     @property
     def current_price(self):
-        return self.product.price - hasattr(self.stream, 'discount') * self.stream.discount
+        if self.stream.discount:
+            return self.product.price - hasattr(self.stream, 'discount') * self.stream.discount
 
     @property
     def current_total_price(self):
-        return self.quantity * (self.product.price - hasattr(self.stream, 'discount') * self.stream.discount)
+        if self.stream.discount:
+            return self.quantity * (self.product.price - hasattr(self.stream, 'discount') * self.stream.discount)
 
     def __str__(self):
         return self.name

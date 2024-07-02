@@ -3,13 +3,14 @@ from django.urls import path
 from apps.views import (ArchivedOrderListView, CancelledOrderListView,
                         CategoryMarketProductView, ClickLikeView,
                         CompetitionListView, DeliveryOrderListView,
-                        LikeListView, MarketListView, MissedCallOrderListView,
+                        LikeListView, MarketListView,
                         NewOrderListView, OrderCreateView, OrderListView,
                         OrderSuccessDetailView, ProductByCategoryListView,
                         ProductDetailView, ProductListView,
                         ProductStatisticsDetailView, ReadyOrderListView,
                         RequestListView, StatisticsView, StreamCreateListView,
-                        TopProductListView, TransactionDetailView)
+                        TopProductListView, TransactionDetailView, OrderChange, OrderNewToReadyUpdateView,
+                        AllOrderListView, CourierPageListView)
 
 urlpatterns = [
 
@@ -18,7 +19,6 @@ urlpatterns = [
     path('stream/<int:pk>', ProductDetailView.as_view(), name='stream_detail'),
     path('product/stats/<slug:slug>', ProductStatisticsDetailView.as_view(), name='product_stats'),
     path('top/product', TopProductListView.as_view(), name='top_product'),
-
 
     path('category-market/<slug:slug>', CategoryMarketProductView.as_view(), name='category_by_product_market'),
     path('category/<slug:slug>', ProductByCategoryListView.as_view(), name='product_by_category'),
@@ -43,14 +43,15 @@ urlpatterns = [
 
     path('requests', RequestListView.as_view(), name='requests'),
 
-
-
     path('operator/new', NewOrderListView.as_view(), name='new_orders'),
     path('operator/ready', ReadyOrderListView.as_view(), name='ready_orders'),
     path('operator/delivery', DeliveryOrderListView.as_view(), name='delivery_orders'),
     path('operator/delivered', NewOrderListView.as_view(), name='delivered_orders'),
     path('operator/cancelled', CancelledOrderListView.as_view(), name='cancelled_orders'),
     path('operator/archived', ArchivedOrderListView.as_view(), name='archived_orders'),
-    path('operator/missed_call', MissedCallOrderListView.as_view(), name='missed_call_orders'),
-]
+    path('operator/all', AllOrderListView.as_view(), name='all'),
 
+    path('operator/order/change/<int:pk>', OrderChange.as_view(), name='order_change'),
+    path('operator/courier/page', CourierPageListView.as_view(), name='courier_page'),
+    path('operator/status/<int:pk>', OrderNewToReadyUpdateView.as_view(), name='order_next_status'),
+]

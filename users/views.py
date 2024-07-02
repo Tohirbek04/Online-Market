@@ -149,7 +149,6 @@ class PaymentDetailView(LoginRequiredMixin, TemplateView):
             'courier_order_delivered',
             'courier_order_delivery')
         return qs
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(**self.get_queryset().aggregate(

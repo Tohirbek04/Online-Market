@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum, F, Case, When, IntegerField, Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from apps.models import SiteSetting, Order
+from apps.models import SiteSetting, Order, Transaction
 from users.models import User, Account
 from users.proxy import (ClientProxyModel, CourierProxyModel,
                          ManagerProxyModel, OperatorProxyModel, ReportProxy)
@@ -53,8 +55,20 @@ class UserModelAdmin(UserAdmin):
 
     def save_model(self, request, obj: User, form, change):
         obj.type = self.type
-        obj.is_staff = self.type == obj.Type.MANAGER
         super().save_model(request, obj, form, change)
+        if self.type == obj.Type.MANAGER:
+            obj.is_staff = True
+            content_type = ContentType.objects.get_for_model(Transaction)
+            name = Transaction.__name__.lower()
+            perm_codename_1 = f'change_{name}'
+            perm_codename_2 = f'view_{name}'
+            permissions = Permission.objects.filter(content_type=content_type,
+                                                    codename__in=(perm_codename_1, perm_codename_2))
+            obj.user_permissions.add(*permissions)
+            obj.save()
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(type=self.type)
 
 
 @admin.register(OperatorProxyModel)

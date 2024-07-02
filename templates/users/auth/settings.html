@@ -57,7 +57,7 @@
                                 <option>Viloyatni tanlang</option>
                                 {% for region in regions %}
                                     {% if user.region.id == region.id %}
-                                        <option selected value="{{ region.id }}">{{ region.name }}</option>
+                                        <option selected value="{{ region.id }}">{{  region.name }}</option>
                                     {% else %}
                                         <option value="{{ region.id }}">{{ region.name }}</option>
                                     {% endif %}

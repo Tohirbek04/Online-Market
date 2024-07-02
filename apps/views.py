@@ -6,14 +6,14 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
-from django.views.generic import CreateView, DetailView, FormView, ListView
+from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
 
 from apps.forms import (OrderCreateModelForm, StreamCreateModelForm,
                         TransactionModelForm)
 from apps.mixins import OperatorRequiredMixin
 from apps.models import (Category, Competition, LikeModel, Order, Product,
                          SiteSetting, Stream, Transaction)
-from users.models import User
+from users.models import User, Region, District
 
 
 class BaseProductListView(ListView):
@@ -65,6 +65,8 @@ class ProductDetailView(DetailView):
         self._cache_stream = None
         if pk is not None:
             self._cache_stream = get_object_or_404(Stream.objects.all(), pk=pk)
+            self._cache_stream.views_count += 1
+            self._cache_stream.save()
             return self._cache_stream.product
         return super().get_object(queryset)
 
@@ -113,7 +115,7 @@ class OrderSuccessDetailView(DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         _settings = SiteSetting.objects.first()
-        ctx['delivery_price'] = _settings.shopping_cost or 0
+        ctx['delivery_price'] = _settings.shopping_cost
         return ctx
 
 
@@ -252,12 +254,13 @@ class StatisticsView(LoginRequiredMixin, ListView):
                     'delivered_count',
                     'cancelled_count',
                     'archived_count',
-                    'missed_call_count'
+                    'missed_call_count',
+                    'total_views_count'
                 )
             )
         else:
             qs = (
-                self.model.objects.select_related('streams').prefetch_related('orders').annotate(
+                self.model.objects.select_related('streams', 'product').prefetch_related('orders').annotate(
                     total_views_count=Count('orders'),
                     new_count=Count('orders', filter=Q(orders__status=Order.Status.NEW)),
                     ready_count=Count('orders', filter=Q(orders__status=Order.Status.READY)),
@@ -277,7 +280,8 @@ class StatisticsView(LoginRequiredMixin, ListView):
                     'delivered_count',
                     'cancelled_count',
                     'archived_count',
-                    'missed_call_count'
+                    'missed_call_count',
+                    'product__title'
                 )
             )
         return qs
@@ -375,43 +379,87 @@ class BaseOrderListView(OperatorRequiredMixin, ListView):
     queryset = Order.objects.all()
 
     def get_queryset(self):
-        return super().get_queryset().filter(status=self.status).select_related('orders').values(
+        return super().get_queryset().filter(status=self.status).select_related('product', 'stream').values(
             'pk',
             'product__title',
             'stream',
             'created_at',
+            'updated_at',
             'phone_number',
             'name',
             'quantity',
             'stream__discount',
-            'product__price'
+            'product__price',
+            'status',
+            'location',
+            'region'
         )
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context_data = super().get_context_data(object_list=object_list, **kwargs)
+        context_data['regions'] = Region.objects.all()
+        context_data['districts'] = District.objects.all()
+        return context_data
 
 
 class NewOrderListView(BaseOrderListView):
-    template_name = 'apps/operator/status/operator-delivery-page.html'
+    template_name = 'apps/operator/status/operator-new-page.html'
     status = Order.Status.NEW
 
 
 class ReadyOrderListView(BaseOrderListView):
+    template_name = 'apps/operator/status/operator-ready-page.html'
     status = Order.Status.READY
 
 
 class DeliveryOrderListView(BaseOrderListView):
+    template_name = 'apps/operator/status/'
     status = Order.Status.DELIVERY
 
 
 class DeliveredOrderListView(BaseOrderListView):
     status = Order.Status.DELIVERED
+    template_name = 'apps/operator/status/operator-all-page.html'
 
 
 class CancelledOrderListView(BaseOrderListView):
     status = Order.Status.CANCELLED
+    template_name = 'apps/operator/status/operator-archived-cancelled.html'
 
 
 class ArchivedOrderListView(BaseOrderListView):
     status = Order.Status.ARCHIVED
+    template_name = 'apps/operator/status/operator-archived-cancelled.html'
 
 
-class MissedCallOrderListView(BaseOrderListView):
-    status = Order.Status.MISSED_CALL
+class AllOrderListView(OperatorRequiredMixin, ListView):
+    paginate_by = 5
+    queryset = Order.objects.all().select_related('product', 'stream')
+    template_name = 'apps/operator/status/operator-all-page.html'
+    context_object_name = 'orders'
+
+
+class OrderChange(DetailView):
+    template_name = 'apps/operator/accepted.html'
+    model = Order
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        context['setting'] = SiteSetting.objects.first()
+        context['regions'] = Region.objects.all()
+        context['order'] = get_object_or_404(Order, pk=pk)
+        return context
+
+
+class OrderNewToReadyUpdateView(UpdateView):
+    template_name = 'apps/operator/accepted.html'
+    model = Order
+    fields = 'quantity', 'region', 'location', 'status', 'description', 'send_order_date', 'operator'
+    success_url = reverse_lazy('new_orders')
+
+
+class CourierPageListView(ListView):
+    template_name = 'apps/operator/courier.html'
+    queryset = User.objects.filter(type=User.Type.COURIER)
+    context_object_name = 'couriers'

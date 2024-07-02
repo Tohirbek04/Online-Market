@@ -52,7 +52,7 @@ class TransactionModelForm(ModelForm):
     def clean(self):
         amount = self.cleaned_data['amount']
         min_sum = SiteSetting.objects.first().min_sum
-        if amount > self.request.user.balance:
+        if amount >= self.request.user.balance:
             raise ValidationError("not enough money !")
         if amount < min_sum:
             raise ValidationError(f"at least {min_sum} thousand can be solved !")

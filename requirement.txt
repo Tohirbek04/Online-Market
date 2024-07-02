@@ -1,4 +1,4 @@
-asgiref==3.8.1
+enasgiref==3.8.1
 Django==5.0.6
 django-ckeditor-5==0.2.13
 pillow==10.3.0

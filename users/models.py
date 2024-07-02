@@ -1,3 +1,4 @@
+import re
 from django.contrib.auth.models import AbstractUser
 from django.db.models import (CASCADE, BigIntegerField, CharField, ForeignKey,
                               ImageField, IntegerField, Model, SlugField, Sum,
@@ -66,6 +67,11 @@ class User(AbstractUser):
     @property
     def get_paid_balance(self):
         return self.transaction_set.filter(status='paid').aggregate(summa=Sum('amount'))['summa']
+
+    def clean(self):
+        phone_number = ''.join(re.findall(r'\d', self.phone))[3:]
+        self.phone = phone_number
+        super().clean()
 
 
 class Account(Model):

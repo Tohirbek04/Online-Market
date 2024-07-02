@@ -67,7 +67,7 @@
                         {% for stream in  streams %}
                             <tr>
                                 <th>{{ stream.name }}</th>
-                                <th>{{ stream.product.title }}</th>
+                                <th>{{ stream.product__title }}</th>
                                 <td>{{ stream.total_views_count }}</td>
                                 <td>{{ stream.new_count }}</td>
                                 <td>{{ stream.ready_count }}</td>

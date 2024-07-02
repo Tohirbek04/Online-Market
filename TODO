@@ -9,7 +9,7 @@ Task
 6. profile page ✅
 8. jazzmin adminkaga
 7. oqim yaratish  ✅
-9. 42.uz dek login qilish ⭕
+9. 42.uz dek login qilish ✅
 
 
 12. ong chap tomonda likelar sonini korsatish kk ✅
@@ -30,6 +30,7 @@ Task
 django-debug-toolbar ✅
 22 i18 ✅
 adminkada login qilishda phone numberni chiroyli qilish ✅
+
 22. yetkazilmoqda -> yetkazildi
 23. Transaction modelda yetkazilmoqda -> yetkazildi
 

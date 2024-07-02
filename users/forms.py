@@ -16,11 +16,6 @@ class CreateForm(UserCreationForm):
         model = User
         fields = 'phone', 'password1', 'password2'
 
-    def clean_phone(self):
-        phone = self.cleaned_data.get('phone', )
-        phone_number = ''.join(re.findall(r'\d', phone))
-        return phone_number[3:]
-
 
 class LoginForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -32,9 +27,9 @@ class LoginForm(ModelForm):
         fields = 'phone', 'password'
 
     def clean_phone(self):
-        phone = self.cleaned_data.get('phone')
-        phone = ''.join(re.findall(r'\d', phone))
-        return phone[3:]
+        phone = self.cleaned_data.get('phone', )
+        phone_number = ''.join(re.findall(r'\d', phone))
+        return phone_number[3:]
 
     def clean(self):
         phone = self.cleaned_data.get('phone')

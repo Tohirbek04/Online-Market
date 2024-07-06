@@ -49,7 +49,6 @@ class User(AbstractUser):
     image = ImageField(upload_to='users/', null=True, blank=True)
     background_image = ImageField(upload_to='users/', null=True, blank=True)
     district = ForeignKey('users.District', CASCADE, null=True, blank=True)
-    region = ForeignKey('users.Region', CASCADE, null=True, blank=True)
     telegram_id = BigIntegerField(null=True, blank=True)
     location = CharField(max_length=255, null=True, blank=True)
     about = CKEditor5Field('Text', config_name='extends', null=True, blank=True)
@@ -69,8 +68,7 @@ class User(AbstractUser):
         return self.transaction_set.filter(status='paid').aggregate(summa=Sum('amount'))['summa']
 
     def clean(self):
-        phone_number = ''.join(re.findall(r'\d', self.phone))[3:]
-        self.phone = phone_number
+        self.phone = ''.join(re.findall(r'\d', self.phone))[-9:]
         super().clean()
 
 

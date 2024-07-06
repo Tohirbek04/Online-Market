@@ -7,7 +7,9 @@ from django.db.models import Sum, F, Case, When, IntegerField, Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from apps.models import SiteSetting, Order, Transaction
+from apps.admin import ClientTransactionModelAdmin
+from apps.models import SiteSetting, Order
+from apps.proxy import ClientTransactionProxyModel
 from users.models import User, Account
 from users.proxy import (ClientProxyModel, CourierProxyModel,
                          ManagerProxyModel, OperatorProxyModel, ReportProxy)
@@ -58,8 +60,9 @@ class UserModelAdmin(UserAdmin):
         super().save_model(request, obj, form, change)
         if self.type == obj.Type.MANAGER:
             obj.is_staff = True
-            content_type = ContentType.objects.get_for_model(Transaction)
-            name = Transaction.__name__.lower()
+            content_type = ContentType.objects.get_for_model(
+                ClientTransactionProxyModel)  # TODO permission was not granted to the manager
+            name = ClientTransactionProxyModel.__name__.lower()
             perm_codename_1 = f'change_{name}'
             perm_codename_2 = f'view_{name}'
             permissions = Permission.objects.filter(content_type=content_type,
@@ -71,9 +74,16 @@ class UserModelAdmin(UserAdmin):
         return super().get_queryset(request).filter(type=self.type)
 
 
+class AccountInline(admin.StackedInline):
+    model = Account
+    can_delete = False
+    verbose_name_plural = 'account'
+
+
 @admin.register(OperatorProxyModel)
 class OperatorModelAdmin(UserModelAdmin):
     type = User.Type.OPERATOR
+    inlines = AccountInline,
     fieldsets = (
         (None, {"fields": ("password", "phone")}),
         (_("Personal info"), {"fields": ("first_name", "last_name", "email", "is_staff", "is_superuser")}),

@@ -1,40 +1,43 @@
 {% extends 'apps/operator/operator-base.html' %}
 {% load static %}
 {% block status_content %}
+    <style>
+        .card.border-dark.mt-5:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+            color: #333;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+    </style>
     <div class="col-md-10" style="margin-left: 16%;">
         <div class="bg-light w-75 m-auto mt-5">
             <form method="GET">
                 <div>
-                    <p>
-                        <label for="id_product">Mahsulot:</label>
-                        <select name="product" id="id_product" multiple>
-                            {#                            {% for order in read_for_deliveries %}#}
-                            {#                                <option value="1">{{ order.product.name }}</option>#}
-                            {#                            {% endfor %}#}
-                        </select>
-                    </p>
-                    <p>
-                        <label for="id_location">Viloyat:</label>
-                        <select name="location" id="id_location" multiple>
-                            <option value="Viloyatni tanlang">Viloyatni tanlang</option>
-                            {% for region in regions %}
-                                <option value="tashkent">{{ region.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </p>
-                    <p>
-                        <label for="id_region">Tuman:</label>
-                        <select name="region" id="id_region" multiple>
-                            {% for district in districts %}
-                                <option value="">{{ district.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </p>
-                    <p>
-                        <label for="id_name">Mahsulot nomi:</label>
-                        <input type="text" name="name" id="id_name">
-                    </p>
+                    <label for="location">Viloyat</label>
+                    <select name="region" class="form-control" id="region-select">
+                        <option></option>
+                        {% for region in regions %}
+                            <option value="{{ region.id }}">{{ region.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label>Tuman/Shahar</label>
+                    <select name="district" class="form-control" id="district-select">
+                        <option></option>
+                        {% for district in districts %}
+                            <option value="{{ district.id }}">{{ district.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label>Mahsulotlar</label>
+                    <select name="product" class="form-control" id="product-select">
+                        <option></option>
+                        {% for product in products %}
+                            <option value="{{ product.title }}">{{ product.title }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
+                <br>
                 <input class="btn btn-primary" type="submit" value="Saqlash">
             </form>
             <form method="POST" action="">
@@ -54,24 +57,45 @@
                                     <li class="">ID: {{ order.pk }}</li>
                                     <li class="">Client: {{ order.name }}</li>
                                     <li class="">Phone: {{ order.phone_number }}</li>
-                                    <li class="">Narxi: {{ order.product__price }} so'm <strong>- {{ order.stream__discount }}</strong> so'm</li>
+                                    <li class="">Narxi: {{ order.product__price }} so'm
+                                        <strong>CHEGIRMA</strong> {{ order.stream__discount }} so'm
+                                    </li>
                                     <li class="">Soni: {{ order.quantity }}</li>
-                                    <li class="">Komment: {{ order.comment }}</li>
+                                    <li class="">Komment: {{ order.description }}</li>
                                     <li class="">Yetkazilish vaqti: {{ order.created_at }}</li>
-                                    <li class="">Oqim ID: {{ order.stream }}</li>
-                                    <li class="">Vaqti: {{ order.created_at }}</li>
-                                    <li class="">Yangilangan vaqti: {{ order.updated_at }}</li>
-                                    <li class="">Status: {{ order.status }}</li>
+                                    <li class="">Oqim ID: {{ order.stream.pk|default_if_none:"Oqim mavjud emas" }}</li>
+                                    <li class="" style="color: #0dd481">Status: {{ order.status }}</li>
                                 </ul>
-                                <a href="{% url 'order_change' order.pk %}" class="btn btn-primary">Holatini o'zgartirish</a>
+                                <a href="{% url 'order_change' order.pk %}" class="btn btn-primary">Holatini
+                                    o'zgartirish</a>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </form>
-        
         </div>
     </div>
-    </div>
-    </div>
+{% endblock %}
+{% block checkbox_js %}
+    <script>
+        function toggle(source) {
+            checkboxes = document.getElementsByName('orders');
+            for (var i = 0, n = checkboxes.length; i < n; i++) {
+                console.log('askar')
+                checkboxes[i].checked = source.checked;
+            }
+        }
+    </script>
+
+    <script>
+        $(function () {
+            $('select').multipleSelect({
+                multiple: true,
+                multipleWidth: 500,
+                maxHeight: 200,
+                maxHeightUnit: 50,
+                filter: true
+            })
+        })
+    </script>
 {% endblock %}

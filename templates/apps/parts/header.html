@@ -94,9 +94,12 @@
             <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">
                 <div class="bg-white dark__bg-1000 rounded-2 py-2">
                     {% if user.is_authenticated %}
-                        <a class="dropdown-item fw-bold text-warning" href="/admin">
+                        {% if user.is_operator %}
+                            <a class="dropdown-item fw-bold text-warning" href="{% url 'new_orders' %}">
                             <span class="fas fa-crown me-1"></span>
-                            <span>Adminlar uchun</span>
+                            <span>Operatorlar uchun</span>
+                            
+                        {% endif %} 
                         </a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'profile' %}">Profil</a>

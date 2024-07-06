@@ -5,13 +5,14 @@
         <div class="col-12">
             <div class="card mb-3 btn-reveal-trigger">
                 <div class="card-header position-relative min-vh-25 mb-8">
-                    <form method="post" action="{% url 'image_update' %}"  enctype="multipart/form-data">
+                    <form method="post" action="{% url 'image_update' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="cover-image">
                             {% if user.background_image %}
-                                <div class="bg-holder rounded-3 rounded-bottom-0" style="background-image:url({{ user.background_image.url }});"></div>
+                                <div class="bg-holder rounded-3 rounded-bottom-0"
+                                     style="background-image:url({{ user.background_image.url }});"></div>
                             {% endif %}
-                            <input class="d-none" id="upload-cover-image" name="background_image" type="file" />
+                            <input class="d-none" id="upload-cover-image" name="background_image" type="file"/>
                             <label class="cover-image-file-input" for="upload-cover-image"><span
                                     class="fas fa-camera me-2"></span><span>Change cover photo</span>
                             </label>
@@ -21,7 +22,7 @@
                                 {% if user.image %}
                                     <img src="{{ user.image.url }}" data-dz-thumbnail="data-dz-thumbnail"/>
                                 {% endif %}
-                                <input class="d-none" id="profile-image"  name="image" type="file"/>
+                                <input class="d-none" id="profile-image" name="image" type="file"/>
                                 <label class="mb-0 overlay-icon d-flex flex-center" for="profile-image"><span
                                         class="bg-holder overlay overlay-0"></span><span
                                         class="z-index-1 text-white dark__text-white text-center fs--1"><span
@@ -29,7 +30,7 @@
                                 </label>
                             </div>
                         </div>
-                  </form>
+                    </form>
                 </div>
             </div>
         </div>
@@ -53,31 +54,18 @@
                                    maxlength="40" id="id_last_name">
                         </div>
                         <div class="col-lg-6">Viloyat
-                            <select name="region" class="form-control" id="region-select">
-                                <option>Viloyatni tanlang</option>
-                                {% for region in regions %}
-                                    {% if user.region.id == region.id %}
-                                        <option selected value="{{ region.id }}">{{  region.name }}</option>
-                                    {% else %}
-                                        <option value="{{ region.id }}">{{ region.name }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
+                            <input name="region" class="form-control" id="region-id">
                         </div>
                         <div class="col-lg-6">Tuman/Shahar
                             <select name="district" class="form-control" id="district-select">
                                 <option>Tumanni tanlang</option>
                                 {% for district in districts %}
-                                    {% if user.district.id == district.id %}
-                                        <option selected value="{{ district.id }}">{{ district.name }}</option>
-                                    {% else %}
-                                        <option  value="{{ district.id }}">{{ district.name }}</option>
-                                    {% endif %}
+                                    <option value="{{ district.id }}">{{ district.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="col-lg-6">Siz haqingizda
-                            <textarea name="about" cols="40" rows="10" class="form-control" maxlength="399" 
+                            <textarea name="about" cols="40" rows="10" class="form-control" maxlength="399"
                                       id="id_description">{{ user.about }}
                             </textarea>
                         </div>
@@ -110,7 +98,7 @@
                             <div class="mb-3">
                                 <label class="form-label" for="confirm-password">Yangi parolni
                                     takrorlash</label>
-                                <input class="form-control" name="conform_password" id="confirm-password"
+                                <input class="form-control" name="confirm_password" id="confirm-password"
                                        type="password">
                             </div>
                             <button class="btn btn-primary d-block w-100" type="submit">Parolni yangilash
@@ -124,29 +112,25 @@
 {% endblock %}
 
 {% block region_district_js %}
-   <script>
-$(document).ready(function () {
-    $('#region-select').change(function () {
-        var regionId = $(this).val();
-        var $districtSelect = $('#district-select');
-        $districtSelect.empty();
-        $districtSelect.append('<option value="">All District</option>');
-
-        if (regionId) {
-            $.ajax({
-                url: '/ajax/get-district/' + regionId,
-                success: function (data) {
-                    $.each(data, function (index, district) {
-                        $districtSelect.append('<option value="' + district.id + '">' + district.name + '</option>');
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#district-select').change(function () {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: '/ajax/get-region/' + districtId,
+                        success: function (response) {
+                            $('#region-id').val(response.region_id);
+                        },
+                        error: function () {
+                            alert('Error retrieving region ID');
+                        }
                     });
-                },
-                error: function (xhr, status, error) {
-                    console.error('An error occurred:', error);
+                } else {
+                    $('#region-id').val('');
                 }
             });
-        }
-    });
-});
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        });
+    </script>
 {% endblock %}

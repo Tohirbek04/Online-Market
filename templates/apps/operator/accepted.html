@@ -13,25 +13,18 @@
 <div class="container py-5">
     <div class="row">
         <h1>Hammasi to'g'ri kiritilganligiga e'tibor bering!</h1>
-        <p>Customer: <span> <a href="tel:{{ order.phone_number }}">{{ order.phone_number }}</a></span></p>
+        <p>Customer: <span> <a href="tel:+998{{ order.phone_number }}">+998{{ order.phone_number }}</a></span></p>
         <p>Dostavka narxi: {{ setting.shopping_cost }}</p>
     </div>
     <form method="post" action="{% url 'order_next_status' order.pk %}">
         {% csrf_token %}
-        <input type="hidden" value="{{ user.pk }}" name="operator">
         <div class="row">
             <div class="col-6">
-                <select class="form-select" aria-label="Default select example" name="quantity">
-                    <option value="1">Maxsulot sonini tanlang !</option>
-                    1
+                <select class="form-select" name="quantity">
                     <option value="1">1</option>
-                    2
                     <option value="2">2</option>
-                    3
                     <option value="3">3</option>
-                    4
                     <option value="4">4</option>
-                    5
                     <option value="5">5</option>
                 </select>
             </div>
@@ -39,24 +32,32 @@
         <br>
         <div class="row">
             <div class="mb-3 col-12">
-                <label for="location">Viloyat:</label>
-                <select class="form-control" id="location" name="region">
-                    <option value="Viloyatni tanlang">Viloyatni tanlang</option>
+                <label for="location">Viloyat</label>
+                <select name="region" class="form-control" id="region-select">
+                    <option>Viloyatni tanlang</option>
                     {% for region in regions %}
-                        {% if order.region == region %}
-                            <option selected value="{{ region.name }}">{{ region.name }}</option>
-                        {% endif %} 
-                        <option value="{{ region.name }}">{{ region.name }}</option>
+                        {% if order.region.id == region.id %}
+                            <option selected value="{{ region.id }}">{{ region.name }}</option>
+                        {% else %}
+                            <option value="{{ region.id }}">{{ region.name }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </div>
         </div>
         <div class="row">
             <div class="mb-3 col-12">
-                <p>Manzil: </p>
-                <label for="exampleFormControlInput1" class="form-label w-50">
-                    <input class="form-control" name="location" id="addres" type="text" value="{{ order.location }}">
-                </label>
+                <label for="location">Tuman/Shahar</label>
+                <select name="district" class="form-control" id="district-select">
+                    <option>Tumanni tanlang</option>
+                    {% for district in districts %}
+                        {% if order.district_id == district.id %}
+                            <option selected value="{{ district.id }}">{{ district.name }}</option>
+                        {% elif order.district.region_id == district.region_id %}
+                            <option value="{{ district.id }}">{{ district.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
             </div>
         </div>
         <div class="row">
@@ -73,53 +74,49 @@
             </p>
             <p>Har bir noto'g'ri to'ldirilgan holat uchun 50000 so'm jarima.</p>
         </div>
-        <div class="row">
+        <div class="row">,
             <div class="form-check">
-                <input checked="checked"
-                       required class="sr-only form-check-input" type="radio" name="status"
-                       id="new_order"
-                       value="new">
+                <input {% if order.status == order.Status.NEW %}checked="checked"{% endif %} required
+                       class="sr-only form-check-input" type="radio" name="status" id="new_order" value="new">
                 <label class="form-check-label" for="new_order">Yangi buyurtma</label>
                 <p style="background: #0dd481">Hali bog'lanilmagan qurilma</p>
             </div>
+
             <div class="form-check">
-                <input required class="form-check-input sr-only" type="radio" name="status" id="ready_to_deliver"
-                       value="ready">
-                <label class="form-check-label" for="ready_to_deliver">
-                    Dastavkaga tayyor
-                </label>
+                <input {% if order.status == order.Status.READY %}checked="checked"{% endif %} required
+                       class="form-check-input sr-only" type="radio" name="status" id="ready_to_deliver" value="ready">
+                <label class="form-check-label" for="ready_to_deliver">Dastavkaga tayyor</label>
                 <p class="bg-primary">Klient buyurtma olishga tayyor yoki buyurtma olish uchun sana aniq qilindi</p>
             </div>
+            {% if order.status == order.Status.READY %}
+                <div class="form-check">
+                    <input {% if order.status == order.Status.DELIVERY %}checked="checked"{% endif %} required
+                           class="form-check-input sr-only" type="radio" name="status" id="ready_to_delivery"
+                           value="delivery">
+                    <label class="form-check-label" for="ready_to_deliver">Yetkazilmoqda</label>
+                    <p style="background: yellow" class="bg-primary">Buyurtma yulga chiqdi</p>
+                </div>
+            {% endif %}
             <div class="form-check">
-                <input required class="form-check-input sr-only" type="radio" name="status" id="ready_to_delivery"
-                       value="delivery">
-                <label class="form-check-label" for="ready_to_deliver">
-                    Yetkazilmoqda
-                </label>
-                <p style="background: yellow" class="bg-primary">Buyurtma yulga chiqdi</p>
-            </div>
-            <div class="form-check">
-                <input required class="form-check-input sr-only" type="radio" name="status"
-                       id="broken"
-                       value="cancelled">
-                <label class="form-check-label" for="broken">
-                    Nosoz, bekor qilindi
-                </label>
+                <input {% if order.status == order.Status.CANCELLED %}checked="checked"{% endif %} required
+                       class="form-check-input sr-only" type="radio" name="status" id="broken" value="cancelled">
+                <label class="form-check-label" for="broken">Nosoz, bekor qilindi</label>
                 <p class="bg-danger">Klient tomonidan shikoyat tushdi</p>
             </div>
+
             <div class="form-check">
-                <input required class="form-check-input sr-only" type="radio" name="status"
-                       id="archive"
-                       value="archived">
+                <input {% if order.status == order.Status.ARCHIVED %}checked="checked"{% endif %} required
+                       class="form-check-input sr-only" type="radio" name="status" id="archive" value="archived">
                 <label class="form-check-label" for="archive"> Arxivlandi </label>
                 <p class="bg-secondary">Noto'g'ri nomer, dubl buyurtma, Bekor qilindi, Olib bo'lgan</p>
             </div>
         </div>
+
         <div class="form-group">
             <label for="exampleFormControlTextarea1">Komment</label>
-            <textarea name="description" class="form-control" id="exampleFormControlTextarea1" rows="3">
-            </textarea>
+            <textarea name="description" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
         </div>
+
         <div style="display: flex; justify-content: flex-end;">
             <a href="{% url 'new_orders' %}" type="button" class="btn m-3 btn-secondary">Chiqish</a>
             <input type="submit" class="btn m-3 btn-primary" value="Yuborish"/>
@@ -128,5 +125,32 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="/static/app/js/regions.js"></script>
+{% block region_district_js %}
+    <script>
+        $(document).ready(function () {
+            $('#region-select').change(function () {
+                var regionId = $(this).val();
+                var $districtSelect = $('#district-select');
+                $districtSelect.empty();
+                $districtSelect.append('<option value="">All District</option>');
+
+                if (regionId) {
+                    $.ajax({
+                        url: '/ajax/get-district/' + regionId,
+                        success: function (data) {
+                            $.each(data, function (index, district) {
+                                $districtSelect.append('<option value="' + district.id + '">' + district.name + '</option>');
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('An error occurred:', error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
 </body>
 </html> 

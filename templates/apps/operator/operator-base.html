@@ -23,7 +23,7 @@
         <div style="margin-left: 15px;">{{ user.first_name }}</div>
         <div>Buyurtmalar</div>
         <h4>ID: {{ user.id }} </h4>
-        <a href="#" class="btn btn-danger btn-sm">Asosiy panel</a>
+        <a href="{% url 'product_list' %}" class="btn btn-danger btn-sm">Asosiy panel</a>
     </nav>
     <div class="row">
         <div class="col-md-2 h-70 text-center" style="background-color: #38ffae; padding-right: 0; position:absolute;">
@@ -88,42 +88,35 @@
 <script src="https://unpkg.com/multiple-select@1.5.2/dist/multiple-select.min.js"></script>
 <script src="/static/app/js/regions_filter.js"></script>
 <script src="{% static 'apps/vendors/fontawesome/all.min.js' %}"></script>
-<script>
-    $(function () {
-        $('select').multipleSelect({
-            multiple: true,
-            multipleWidth: 500,
-            maxHeight: 200,
-            maxHeightUnit: 50,
-            filter: true
-        })
-    })
-</script>
-<script>
-    $(document).ready(function () {
-        $('#region-select').change(function () {
-            var regionId = $(this).val();
-            var $districtSelect = $('#district-select');
-            $districtSelect.empty();
-            $districtSelect.append('<option value="">All District</option>');
+{% block region_district_js %}
+    <script>
+        $(document).ready(function () {
+            $('#region-select').change(function () {
+                var regionId = $(this).val();
+                var $districtSelect = $('#district-select');
+                $districtSelect.empty();
+                $districtSelect.append('<option value="">All District</option>');
 
-            if (regionId) {
-                $.ajax({
-                    url: 'operator/ajax/get-districts/' + regionId,
-                    success: function (data) {
-                        $.each(data, function (index, district) {
-                            $districtSelect.append('<option value="' + district.id + '">' + district.name + '</option>');
-                        });
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('An error occured', error);
-                    }
-                });
-            }
+                if (regionId) {
+                    $.ajax({
+                        url: '/ajax/get-district/' + regionId,
+                        success: function (data) {
+                            $.each(data, function (index, district) {
+                                $districtSelect.append('<option value="' + district.id + '">' + district.name + '</option>');
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('An error occurred:', error);
+                        }
+                    });
+                }
+            });
         });
-    });
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{% block main_js %}{% endblock %}
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+{% block checkbox_js %}
+    
+{% endblock %}
 </body>
 </html>

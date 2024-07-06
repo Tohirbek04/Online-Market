@@ -30,13 +30,12 @@ Task
 django-debug-toolbar ✅
 22 i18 ✅
 adminkada login qilishda phone numberni chiroyli qilish ✅
+from_working_time to_working_time passport shu fiedlar faqat operator da bulish kerak one two one bulish kerak accountdan ✅
+22. yetkazilmoqda -> yetkazildi ✅
 
-22. yetkazilmoqda -> yetkazildi
 23. Transaction modelda yetkazilmoqda -> yetkazildi
 
-from_working_time to_working_time passport shu fiedlar faqat operator da bulish kerak one two one bulish kerak accountdan
 
-Prefetch() ❓
 
 
 

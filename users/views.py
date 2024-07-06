@@ -1,17 +1,17 @@
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.views import LoginView
 from django.core.cache import cache
 from django.db.models import Case, F, IntegerField, Q, Sum, When
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, FormView, TemplateView, UpdateView
+from django.views.generic import CreateView, TemplateView, UpdateView, FormView
 
 from apps.models import Order, SiteSetting, Transaction
 from users.forms import CreateForm, LoginForm, UpdateModelForm, PasswordUpdateForm
-from users.models import District, Region, User
+from users.models import District, User, Region
 
 
 class RegisterView(CreateView):
@@ -20,9 +20,9 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('login')
 
 
-class UserLoginView(FormView):
+class UserLoginView(LoginView):
     form_class = LoginForm
-    # redirect_authenticated_user = True
+    redirect_authenticated_user = True
     template_name = 'users/auth/login.html'
 
     def form_valid(self, form):
@@ -69,9 +69,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['regions'] = Region.objects.all()
-        if region_id := self.request.user.region:
-            context['districts'] = District.objects.filter(region_id=region_id)
+        context['districts'] = District.objects.all()
         return context
 
 
@@ -85,15 +83,21 @@ class ImageUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
-class PasswordUpdateView(LoginRequiredMixin, PasswordChangeView):
+class PasswordUpdateView(LoginRequiredMixin, FormView):
     form_class = PasswordUpdateForm
     template_name = 'users/auth/settings.html'
     success_url = reverse_lazy('profile_update')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['instance'] = self.request.user
+        kwargs['request'] = self.request.user
         return kwargs
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 
 class ProfileTemplateView(LoginRequiredMixin, TemplateView):
@@ -149,6 +153,7 @@ class PaymentDetailView(LoginRequiredMixin, TemplateView):
             'courier_order_delivered',
             'courier_order_delivery')
         return qs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(**self.get_queryset().aggregate(
@@ -172,3 +177,8 @@ class PaymentDetailView(LoginRequiredMixin, TemplateView):
 def get_district_by_region(request, region_id):
     districts = District.objects.filter(region_id=region_id).values('id', 'name')
     return JsonResponse(list(districts), safe=False)
+
+
+def get_region(request, id):
+    region_id = get_object_or_404(District, id=id).region
+    return JsonResponse({"region_id": region_id}, safe=False)

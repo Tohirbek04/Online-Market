@@ -2,65 +2,63 @@
 {% load static %}
 {% load humanize %}
 {% block status_content %}
+    <style>
+        .card.border-dark.mt-5:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+            color: #333;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+    </style>
     <div class="col-md-10" style="margin-left: 16%;">
         <div class="bg-light w-75 m-auto mt-5">
             <form method="GET">
                 <div>
-                    <p>
-                        <label for="id_product">Mahsulot:</label>
-                        <select name="product" id="id_product" multiple>
-                            {#                            {% for order in orders %}#}
-                            {#                                <option value="">{{ order.product__title }}</option>#}
-                            {#                            {% endfor %}#}
-                        </select>
-                    </p>
-                    <p>
-                        <label for="region-select">Viloyat:</label>
-                        <select name="region" id="region-select" multiple>
-                            <option value="Viloyatni tanlang">Viloyatni tanlang</option>
-                            {% for region in regions %}
-                                <option value="{{ region.id }}">{{ region.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </p>
-                    <p>
-                        <label for="id_district">Tuman:</label>
-                        <select name="district" id="id_district" multiple>
-                            {% for district in districts %}
-                                <option value="{{ district.id }}">{{ district.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </p>
-                    <p>
-                        <label for="id_name">Mahsulot nomi:{{ order.produc_title }}</label>
-                        <input type="text" name="name" id="id_name">
-                    </p></div>
+                    <label for="location">Viloyat</label>
+                    <select name="region" class="form-control" id="region-select">
+                        <option></option>
+                        {% for region in regions %}
+                            <option value="{{ region.id }}">{{ region.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label>Tuman/Shahar</label>
+                    <select name="district" class="form-control" id="district-select">
+                        <option></option>
+                        {% for district in districts %}
+                            <option value="{{ district.id }}">{{ district.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label>Mahsulotlar</label>
+                    <select name="product" class="form-control" id="product-select">
+                        <option></option>
+                        {% for product in products %}
+                            <option value="{{ product.title }}">{{ product.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br>
                 <input class="btn btn-primary" type="submit" value="Saqlash">
             </form>
 
             {% for order in orders %}
                 <div class="card border-dark mt-5">
                     <div class="card-body">
-                        <h2 class="card-title">product title: {{ order.product__title }}</h2>
+                        <h2 class="card-title">product title: {{ order.product.title }}</h2>
                         <h3 class="card-title text-danger">ZAKAZ ID: {{ order.pk }} </h3>
                         <ul class="text-muted">
-                            <li class="">Reklama tarqatuvchi ID: {{ order.stream }}</li>
+                            <li class="">Reklama tarqatuvchi
+                                ID: {{ order.referral_user_id|default_if_none:' Mavjud emas' }}</li>
                             <li class="">Client: {{ order.name }}</li>
-                            <li class="">Narxi: {{ order.product__price }} so'm</li>
+                            <li class="">Narxi: {{ order.product.price|intcomma }} so'm</li>
                             <li class="">Soni: {{ order.quantity }}</li>
                             <li class="">Vaqti: {{ order.created_at }}</li>
-                            <li class="">Holati:{{ order.status }}</li>
+                            <li class="" style="color: #0dd481">Holati:{{ order.get_status_display }}</li>
                         </ul>
                         <a href="{% url 'order_change' order.pk %}" class="btn btn-primary"
-                           style="float: left; margin-right: 10px;">
-                            Qabul qilish
+                           style="float: left; margin-right: 10px;"> Qabul qilish
                         </a>
-                        <form action="#" method="post">
-
-                            <input type="text" hidden name="order" value="1746827">
-                            <input class="btn btn-primary" type="submit" value="Hold"
-                                   style="float: right; margin-right: 10px;">
-                        </form>
                     </div>
                 </div>
             {% endfor %}

@@ -1,10 +1,10 @@
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, PasswordChangeView
 from django.urls import path
 
 from users.views import (ImageUpdateView, LoginFromTelegramBotTemplateView,
                          PaymentDetailView, ProfileTemplateView,
                          ProfileUpdateView, RegisterView,
-                         UserLoginView, get_district_by_region, LoginCheckView)
+                         UserLoginView, LoginCheckView, PasswordUpdateView, get_district_by_region, get_region)
 
 urlpatterns = [
     path('sign_up', RegisterView.as_view(), name='register'),
@@ -17,12 +17,10 @@ urlpatterns = [
 
     path('update/profile', ProfileUpdateView.as_view(), name='profile_update'),
     path('update/image', ImageUpdateView.as_view(), name='image_update'),
-    path('update/password', ImageUpdateView.as_view(), name='password_update'),
-
+    path('update/password', PasswordUpdateView.as_view(), name='password_update'),
 
     path('payment', PaymentDetailView.as_view(), name='payment'),
-
-    path('ajax/get-district/<int:region_id>', get_district_by_region, name='get_districts')
-
+    path('ajax/get-district/<int:region_id>', get_district_by_region, name='get_districts'),
+    path('ajax/get-region/<int:id>', get_region, name='get_region')
 
 ]

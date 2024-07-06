@@ -125,7 +125,7 @@ PARLER_LANGUAGES = {
         {'code': 'ru'},
     ),
     'default': {
-        'fallbacks': ['en'],
+        'fallbacks': ['uz'],
         'hide_untranslated': False,
     }
 }

@@ -1,6 +1,6 @@
 from django.db.models import (CASCADE, SET_NULL, BooleanField, CharField,
                               DateTimeField, ForeignKey, ImageField,
-                              IntegerField, Model, SlugField, TextChoices, DateField)
+                              IntegerField, Model, SlugField, TextChoices, DateField, CheckConstraint, Q, F)
 from django.template.defaultfilters import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -37,9 +37,9 @@ class Product(Model):
 
     class Meta:
         ordering = ['created_at']
-        # constraints = [
-        #     CheckConstraint(check=Q(price__gt=F('extra_balance')), name='price_gt_extra_balance'),
-        # ]
+        constraints = [
+            CheckConstraint(check=Q(price__gt=F('extra_balance')), name='price_gt_extra_balance'),
+        ]
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -76,7 +76,8 @@ class Order(Model):
     stream = ForeignKey('apps.Stream', SET_NULL, null=True, blank=True, related_name='orders')
     courier = ForeignKey('users.User', SET_NULL, null=True, blank=True, related_name='courier',
                          limit_choices_to={'type': User.Type.COURIER})
-    region = CharField(max_length=30, null=True, blank=True)
+    region = ForeignKey('users.Region', SET_NULL, null=True, blank=True)
+    district = ForeignKey('users.District', SET_NULL, null=True, blank=True)
     operator = ForeignKey('users.User', SET_NULL, null=True, blank=True, related_name='operator',
                           limit_choices_to={'type': User.Type.OPERATOR})
     send_order_date = DateField(null=True, blank=True)
@@ -96,14 +97,15 @@ class Order(Model):
             self.operator.balance += site.operator_sum
             self.operator.save()
         if self.status == self.Status.DELIVERED and self.courier:
-            self.courier.balance += site.shopping_cost
             self.courier.refresh_from_db()
+            balance = self.courier.balance
+            self.courier.balance += site.shopping_cost
             self.courier.save()
         super().save(force_insert, force_update, using, update_fields)
 
     @property
     def current_price(self):
-        if self.stream.discount:
+        if self.stream and self.stream.discount:
             return self.product.price - hasattr(self.stream, 'discount') * self.stream.discount
 
     @property

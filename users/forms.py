@@ -3,7 +3,7 @@ import re
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from django.forms import CharField, ModelChoiceField, ModelForm, PasswordInput
+from django.forms import CharField, ModelChoiceField, ModelForm, PasswordInput, Form
 
 from users.models import District, Region, User
 
@@ -45,14 +45,14 @@ class LoginForm(ModelForm):
         return self.user_cache
 
 
-class PasswordUpdateForm(ModelForm):
+class PasswordUpdateForm(Form):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
     old_password = CharField(max_length=20, widget=PasswordInput, label="Old Password")
     new_password = CharField(max_length=20, widget=PasswordInput, label="New Password")
     confirm_password = CharField(max_length=20, widget=PasswordInput, label="Confirm New Password")
-
-    class Meta:
-        model = User
-        fields = []
 
     def clean(self):
         cleaned_data = super().clean()
@@ -62,18 +62,16 @@ class PasswordUpdateForm(ModelForm):
 
         if new_password and new_password != confirm_password:
             self.add_error('confirm_password', "New password and confirm password do not match.")
-
-        user = authenticate(phone=self.instance.phone, password=old_password)
-        if not user:
+        self.user = authenticate(phone=self.request.phone, password=old_password)
+        if not self.user:
             self.add_error('old_password', "Old password is incorrect.")
 
         return cleaned_data
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
+    def save(self):
+        user = self.user.save(commit=False)
         user.set_password(self.cleaned_data['new_password'])
-        if commit:
-            user.save()
+        user.save()
         return user
 
 
@@ -84,3 +82,4 @@ class UpdateModelForm(ModelForm):
     class Meta:
         model = User
         fields = 'first_name', 'last_name', 'region', 'district', 'about'
+

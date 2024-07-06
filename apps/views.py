@@ -20,8 +20,7 @@ class BaseProductListView(ListView):
     queryset = Product.objects.select_related('category')
 
     def get_queryset(self):
-        if self.request.user:
-            user_has_liked_subquery = LikeModel.objects.filter(user=self.request.user.id, product=OuterRef('pk'))
+        user_has_liked_subquery = LikeModel.objects.filter(user=self.request.user.id, product=OuterRef('pk'))
         return super().get_queryset().annotate(is_liked=Exists(user_has_liked_subquery))
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -94,17 +93,14 @@ class OrderCreateView(FormView):
         order.save()
         return redirect('status_success', order.id)
 
-    def form_invalid(self, form):
-        return super().form_invalid(form)
-
 
 class OrderListView(LoginRequiredMixin, ListView):
-    queryset = Order.objects.all()
+    queryset = Order.objects.select_related('product')
     template_name = 'apps/orders.html'
     context_object_name = 'orders'
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user).select_related('product')
+        return self.queryset.filter(user=self.request.user)
 
 
 class OrderSuccessDetailView(DetailView):
@@ -121,19 +117,21 @@ class OrderSuccessDetailView(DetailView):
 
 class ClickLikeView(View):
     def get(self, request, pk):
-        obj, created = LikeModel.objects.get_or_create(user=request.user, product_id=pk)
-        if not created:
-            obj.delete()
+        if self.request.user.is_authenticated:
+            obj, created = LikeModel.objects.get_or_create(user=request.user, product_id=pk)
+            if not created:
+                obj.delete()
+            return redirect('product_list')
         return redirect('product_list')
 
 
 class LikeListView(ListView):
-    queryset = LikeModel.objects.all()
+    queryset = LikeModel.objects.select_related('product')
     template_name = 'apps/like-list.html'
     context_object_name = 'likes'
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user).select_related('product')
+        return self.queryset.filter(user=self.request.user)
 
 
 class MarketListView(LoginRequiredMixin, ListView):
@@ -200,11 +198,10 @@ class ProductStatisticsDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'product'
 
     def get_context_data(self, **kwargs):
-        slug = self.kwargs.get(self.slug_url_kwarg)
-        product = self.model.objects.get(slug=slug)
+        product = self.get_object()
         context = super().get_context_data(**kwargs)
-        context['total_stream_count'] = Stream.objects.filter(product_id=product.id).count()
-        context['owner_stream_count'] = Stream.objects.filter(product_id=product.id, owner=self.request.user).count()
+        context['total_stream_count'] = product.streams.count()
+        context['owner_stream_count'] = product.streams.filter(owner=self.request.user).count()
         return context
 
 
@@ -379,42 +376,31 @@ class BaseOrderListView(OperatorRequiredMixin, ListView):
     queryset = Order.objects.all()
 
     def get_queryset(self):
-        return super().get_queryset().filter(status=self.status).select_related('product', 'stream').values(
-            'pk',
-            'product__title',
-            'stream',
-            'created_at',
-            'updated_at',
-            'phone_number',
-            'name',
-            'quantity',
-            'stream__discount',
-            'product__price',
-            'status',
-            'location',
-            'region'
-        )
+        return super().get_queryset().filter(
+            Q(status=self.status) &
+            Q(product__title__icontains=self.request.GET.get('product', ''))
+        ).select_related('product', 'stream')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context_data = super().get_context_data(object_list=object_list, **kwargs)
         context_data['regions'] = Region.objects.all()
-        context_data['districts'] = District.objects.all()
+        context_data['products'] = Product.objects.all().values('id', 'title')
         return context_data
 
 
 class NewOrderListView(BaseOrderListView):
-    template_name = 'apps/operator/status/operator-new-page.html'
     status = Order.Status.NEW
+    template_name = 'apps/operator/status/operator-new-page.html'
 
 
 class ReadyOrderListView(BaseOrderListView):
-    template_name = 'apps/operator/status/operator-ready-page.html'
     status = Order.Status.READY
+    template_name = 'apps/operator/status/operator-ready-page.html'
 
 
 class DeliveryOrderListView(BaseOrderListView):
-    template_name = 'apps/operator/status/'
     status = Order.Status.DELIVERY
+    template_name = 'apps/operator/status/operator-all-page.html'
 
 
 class DeliveredOrderListView(BaseOrderListView):
@@ -424,38 +410,54 @@ class DeliveredOrderListView(BaseOrderListView):
 
 class CancelledOrderListView(BaseOrderListView):
     status = Order.Status.CANCELLED
-    template_name = 'apps/operator/status/operator-archived-cancelled.html'
+    template_name = 'apps/operator/status/operator-all-page.html'
 
 
 class ArchivedOrderListView(BaseOrderListView):
     status = Order.Status.ARCHIVED
-    template_name = 'apps/operator/status/operator-archived-cancelled.html'
+    template_name = 'apps/operator/status/operator-all-page.html'
 
 
 class AllOrderListView(OperatorRequiredMixin, ListView):
-    paginate_by = 5
-    queryset = Order.objects.all().select_related('product', 'stream')
+    queryset = Order.objects.select_related('product', 'stream')
     template_name = 'apps/operator/status/operator-all-page.html'
     context_object_name = 'orders'
+    paginate_by = 5
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        product = self.request.GET.get('product')
+        if product:
+            qs = qs.filter(product__title__icontains=product)
+        return qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context_data = super().get_context_data(object_list=object_list, **kwargs)
+        context_data['regions'] = Region.objects.all()
+        context_data['products'] = Product.objects.only('title')
+        return context_data
 
 
-class OrderChange(DetailView):
-    template_name = 'apps/operator/accepted.html'
+class OrderChangeDetailView(DetailView):
     model = Order
+    template_name = 'apps/operator/accepted.html'
+    context_object_name = 'order'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        pk = self.kwargs.get(self.pk_url_kwarg)
+        order = self.get_object()
+        order.operator_id = self.request.user.id
+        order.save()
         context['setting'] = SiteSetting.objects.first()
         context['regions'] = Region.objects.all()
-        context['order'] = get_object_or_404(Order, pk=pk)
+        context['districts'] = District.objects.select_related('region')
         return context
 
 
 class OrderNewToReadyUpdateView(UpdateView):
     template_name = 'apps/operator/accepted.html'
     model = Order
-    fields = 'quantity', 'region', 'location', 'status', 'description', 'send_order_date', 'operator'
+    fields = 'quantity', 'district', 'location', 'status', 'description', 'send_order_date'
     success_url = reverse_lazy('new_orders')
 
 

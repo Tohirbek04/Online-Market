@@ -9,7 +9,7 @@ from django.views import View
 from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
 
 from apps.forms import (OrderCreateModelForm, StreamCreateModelForm,
-                        TransactionModelForm)
+                        TransactionModelForm, CourierForm)
 from apps.mixins import OperatorRequiredMixin
 from apps.models import (Category, Competition, LikeModel, Order, Product,
                          SiteSetting, Stream, Transaction)
@@ -31,7 +31,7 @@ class BaseProductListView(ListView):
 
 
 class ProductListView(BaseProductListView):
-    paginate_by = 10
+    paginate_by = 5
     template_name = 'apps/products/product-list.html'
 
     def get_queryset(self):
@@ -50,7 +50,7 @@ class ProductByCategoryListView(BaseProductListView):
         slug = self.kwargs.get('slug')
         qs = super().get_queryset()
         if slug:
-            qs = qs.filter(category__slug=slug).select_related('category')
+            qs = qs.filter(category__slug=slug)
         return qs
 
 
@@ -74,7 +74,6 @@ class ProductDetailView(DetailView):
         price = self.object.price
         if self._cache_stream:
             price -= self._cache_stream.discount
-
         ctx['stream_id'] = self.kwargs.get(self.pk_url_kwarg, '')
         ctx['price'] = price
         return ctx
@@ -125,7 +124,7 @@ class ClickLikeView(View):
         return redirect('product_list')
 
 
-class LikeListView(ListView):
+class LikeListView(LoginRequiredMixin, ListView):
     queryset = LikeModel.objects.select_related('product')
     template_name = 'apps/like-list.html'
     context_object_name = 'likes'
@@ -310,10 +309,9 @@ class CompetitionListView(LoginRequiredMixin, ListView):
             end_date = self.competition.end_date
             qs = (
                 (self.model.objects.prefetch_related('referral_user')
-                 .annotate(order_delivered_count=
-                           Count('referral_user', filter=
-                           Q(referral_user__created_at__range=(start_date, end_date)) &
-                           Q(referral_user__status=Order.Status.DELIVERED)))
+                 .annotate(order_delivered_count=Count('referral_user', filter=
+                Q(referral_user__created_at__range=(start_date, end_date)) &
+                Q(referral_user__status=Order.Status.DELIVERED)))
                  ).values('first_name', 'order_delivered_count')
             ).order_by('-order_delivered_count')
             return qs
@@ -357,8 +355,8 @@ class TransactionDetailView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
-        tr = form.save(commit=False)
-        tr.user = self.request.user
+        transaction = form.save(commit=False)
+        transaction.user = self.request.user
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -376,10 +374,14 @@ class BaseOrderListView(OperatorRequiredMixin, ListView):
     queryset = Order.objects.all()
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            Q(status=self.status) &
-            Q(product__title__icontains=self.request.GET.get('product', ''))
-        ).select_related('product', 'stream')
+        qs = super().get_queryset().filter(status=self.status)
+        if product := self.request.GET.get('product', ''):
+            qs = qs.filter(product__title__icontains=product)
+        if region := self.request.GET.get('region'):
+            qs = qs.filter(district__region_id=region)
+        if district := self.request.GET.get('district'):
+            qs = qs.filter(district_id=district)
+        return qs.select_related('product', 'stream')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context_data = super().get_context_data(object_list=object_list, **kwargs)
@@ -410,12 +412,12 @@ class DeliveredOrderListView(BaseOrderListView):
 
 class CancelledOrderListView(BaseOrderListView):
     status = Order.Status.CANCELLED
-    template_name = 'apps/operator/status/operator-all-page.html'
+    template_name = 'apps/operator/status/status-change.html'
 
 
 class ArchivedOrderListView(BaseOrderListView):
     status = Order.Status.ARCHIVED
-    template_name = 'apps/operator/status/operator-all-page.html'
+    template_name = 'apps/operator/status/status-change.html'
 
 
 class AllOrderListView(OperatorRequiredMixin, ListView):
@@ -461,7 +463,10 @@ class OrderNewToReadyUpdateView(UpdateView):
     success_url = reverse_lazy('new_orders')
 
 
-class CourierPageListView(ListView):
-    template_name = 'apps/operator/courier.html'
-    queryset = User.objects.filter(type=User.Type.COURIER)
-    context_object_name = 'couriers'
+class CourierPageListView(FormView):
+    form_class = CourierForm
+    success_url = reverse_lazy('product_list')
+
+    def form_valid(self, form):
+        orders = self.request.POST.get('orders')
+        return super().form_valid(form)

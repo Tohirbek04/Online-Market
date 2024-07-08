@@ -2,7 +2,8 @@ import re
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.forms import ModelChoiceField, ModelForm
+from django.forms import ModelChoiceField, ModelForm, Form
+from django.utils.translation import gettext_lazy as _
 
 from apps.models import Order, SiteSetting, Stream, Transaction
 
@@ -15,8 +16,7 @@ class OrderCreateModelForm(ModelForm):
         fields = 'phone_number', 'name', 'product', 'stream'
 
     def clean_phone_number(self):
-        phone = self.cleaned_data.get('phone_number', )
-        phone_number = ''.join(re.findall(r'\d', phone))
+        phone_number = ''.join(re.findall(r'\d', self.cleaned_data.get('phone_number', )))
         return phone_number[3:]
 
 
@@ -53,7 +53,13 @@ class TransactionModelForm(ModelForm):
         amount = self.cleaned_data['amount']
         min_sum = SiteSetting.objects.first().min_sum
         if amount >= self.request.user.balance:
+            messages.info(self.request, _('not enough money !'))
             raise ValidationError("not enough money !")
         if amount < min_sum:
+            messages.info(self.request, _(f"at least {min_sum} thousand can be solved !"))
             raise ValidationError(f"at least {min_sum} thousand can be solved !")
         return self.cleaned_data
+
+
+class CourierForm(Form):
+    pass

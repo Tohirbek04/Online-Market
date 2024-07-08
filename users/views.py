@@ -1,7 +1,9 @@
-from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.db.models import Case, F, IntegerField, Q, Sum, When
 from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
@@ -10,7 +12,7 @@ from django.views import View
 from django.views.generic import CreateView, TemplateView, UpdateView, FormView
 
 from apps.models import Order, SiteSetting, Transaction
-from users.forms import CreateForm, LoginForm, UpdateModelForm, PasswordUpdateForm
+from users.forms import CreateForm, LoginForm, UpdateModelForm, ChangePasswordForm
 from users.models import District, User, Region
 
 
@@ -69,7 +71,8 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['districts'] = District.objects.all()
+        context['districts'] = District.objects.select_related('region')
+        context['regions'] = Region.objects.all()
         return context
 
 
@@ -81,23 +84,6 @@ class ImageUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
-
-
-class PasswordUpdateView(LoginRequiredMixin, FormView):
-    form_class = PasswordUpdateForm
-    template_name = 'users/auth/settings.html'
-    success_url = reverse_lazy('profile_update')
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['request'] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        return super().form_invalid(form)
 
 
 class ProfileTemplateView(LoginRequiredMixin, TemplateView):
@@ -182,3 +168,31 @@ def get_district_by_region(request, region_id):
 def get_region(request, id):
     region_id = get_object_or_404(District, id=id).region
     return JsonResponse({"region_id": region_id}, safe=False)
+
+
+class PasswordUpdateFormView(FormView):
+    template_name = 'users/auth/settings.html'
+    form_class = ChangePasswordForm
+    success_url = reverse_lazy('profile_update')
+
+    def form_valid(self, form):
+        user = self.request.user
+        old_password = form.cleaned_data['old_password']
+        new_password = form.cleaned_data['new_password']
+        conform_password = form.cleaned_data['confirm_password']
+
+        if user.check_password(old_password):
+            if new_password and new_password == conform_password:
+                user.set_password(new_password)
+                user.save()
+                messages.success(self.request, 'password change ✔')
+            else:
+                messages.error(self.request, 'password no change new password or confirm password invalid ❗')
+        else:
+            messages.error(self.request, 'You entered your password invalid ❗')
+
+        update_session_auth_hash(self.request, user)
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return redirect('profile_update')

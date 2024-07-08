@@ -7,7 +7,6 @@ from django.db.models import Sum, F, Case, When, IntegerField, Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from apps.admin import ClientTransactionModelAdmin
 from apps.models import SiteSetting, Order
 from apps.proxy import ClientTransactionProxyModel
 from users.models import User, Account

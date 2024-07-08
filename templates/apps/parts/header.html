@@ -1,4 +1,10 @@
 {% load static %}
+{% load i18n %}
+<style>
+    .flag-icon {
+        margin-right: 8px;
+    }
+</style>
 <nav class="navbar navbar-light navbar-glass navbar-top navbar-expand">
 
     <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" type="button"
@@ -15,15 +21,21 @@
     <ul class="navbar-nav align-items-center d-none d-lg-block">
         <li class="nav-item">
             <div class="search-box" data-list='{"valueNames":["title"]}'>
-                <form class="position-relative" data-bs-toggle="search" data-bs-display="static" action="{% url 'product_list' %}">
+                <form class="position-relative" data-bs-toggle="search" data-bs-display="static"
+                      action="{% url 'product_list' %}">
                     <input class="form-control search-input fuzzy-search" type="search" name="search"
-                           placeholder="Search..." aria-label="Search"/>
+                           placeholder="{% trans 'Search' %}" aria-label="Search"/>
                     <span class="fas fa-search search-box-icon"></span>
                 </form>
             </div>
         </li>
     </ul>
     <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
+        <select class="flag-select" onchange="changeLanguage(this.value)">
+            <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+            <option value="uz" {% if LANGUAGE_CODE == 'uz' %}selected{% endif %}>Uzbek</option>
+            <option value="ru" {% if LANGUAGE_CODE == 'ru' %}selected{% endif %}>Russian</option>
+        </select>
         <li class="nav-item">
             <div class="theme-control-toggle fa-icon-wait px-2">
                 <input class="form-check-input ms-0 theme-control-toggle-input" id="themeControlToggle"
@@ -41,13 +53,11 @@
                 <span style="position: relative;">
                         <i class="fas fa-heart" style="color: red; font-size: 20px;"></i>
                     <span class="badge"
-                        style="position: absolute; top: -20px; right: -13px; background-color: #FF5733; color: white; 
+                          style="position: absolute; top: -20px; right: -13px; background-color: #FF5733; color: white; 
                         border-radius: 50%; padding: 2px 6px; font-size: 12px;">{{ user.likes.count }}
                     </span>
                 </span>
             </a>
-
-
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link notification-indicator notification-indicator-primary px-0 fa-icon-wait"
@@ -55,28 +65,25 @@
                aria-haspopup="true" aria-expanded="false"><span class="fas fa-bell"
                                                                 data-fa-transform="shrink-6"
                                                                 style="font-size: 33px;"></span></a>
+
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification"
                  aria-labelledby="navbarDropdownNotification">
                 <div class="card card-notification shadow-none">
                     <div class="card-header">
                         <div class="row justify-content-between align-items-center">
                             <div class="col-auto">
-                                <h6 class="card-header-title mb-0">Notifications</h6>
+                                <h6 class="card-header-title mb-0">{% trans 'Notifications' %}</h6>
                             </div>
-                            <div class="col-auto ps-0 ps-sm-3"><a class="card-link fw-normal" href="#">Mark
-                                all as read</a></div>
                         </div>
                     </div>
                     <div class="scrollbar-overlay" style="max-height:19rem">
                         <div class="list-group list-group-flush fw-normal fs--1">
-                            <div class="list-group-title border-bottom">NEW</div>
+                            <div class="list-group-title border-bottom">{% trans 'NEW' %}</div>
                             <div class="list-group-item">
                                 <a class="notification notification-flush notification-unread" href="#"></a>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer text-center border-top"><a class="card-link d-block" href="">View
-                        all</a></div>
                 </div>
             </div>
         </li>
@@ -97,25 +104,33 @@
                         {% if user.is_operator %}
                             <a class="dropdown-item fw-bold text-warning" href="{% url 'new_orders' %}">
                             <span class="fas fa-crown me-1"></span>
-                            <span>Operatorlar uchun</span>
-                            
-                        {% endif %} 
-                        </a>
+                            <span>{% trans 'For operators' %}</span>
+                        {% endif %}
+                    </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'profile' %}">Profil</a>
-                        <a class="dropdown-item" href="https://t.me/Tohir_PD">Fikr-mulohazalar</a>
-                        <a class="dropdown-item" href="{% url 'profile_update' %}">Sozlamalar</a>
+                        <a class="dropdown-item" href="{% url 'profile' %}">{% trans 'Profile' %}</a>
+                        <a class="dropdown-item" href="https://t.me/Tohir_PD">{% trans 'Opinions' %}</a>
+                        <a class="dropdown-item" href="{% url 'profile_update' %}">{% trans 'Settings' %}</a>
                         <div class="dropdown-divider"></div>
                         <form action="{% url 'logout' %}" method="post" class="dropdown-item">
                             {% csrf_token %}
                             <input type="submit" value="Logout" style="background-color:red; border-radius:5px">
                         </form>
                     {% else %}
-                        <a class="dropdown-item" href="{% url 'register' %}">Ro'yxatdan o'tish</a>
-                        <a class="dropdown-item" href="{% url 'login' %}">Kirish</a>
+                        <a class="dropdown-item" href="{% url 'register' %}">{% trans 'Sign Up' %}</a>
+                        <a class="dropdown-item" href="{% url 'login' %}">{% trans 'Sign In' %}</a>
                     {% endif %}
                 </div>
             </div>
         </li>
     </ul>
 </nav>
+<script>
+    function changeLanguage(lang) {
+        var url = window.location.href;
+        var pathArray = window.location.pathname.split('/');
+        pathArray[1] = lang;
+        var newPathname = pathArray.join('/');
+        window.location.href = newPathname;
+    }
+</script>

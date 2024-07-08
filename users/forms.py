@@ -45,36 +45,6 @@ class LoginForm(ModelForm):
         return self.user_cache
 
 
-class PasswordUpdateForm(Form):
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        super().__init__(*args, **kwargs)
-
-    old_password = CharField(max_length=20, widget=PasswordInput, label="Old Password")
-    new_password = CharField(max_length=20, widget=PasswordInput, label="New Password")
-    confirm_password = CharField(max_length=20, widget=PasswordInput, label="Confirm New Password")
-
-    def clean(self):
-        cleaned_data = super().clean()
-        old_password = cleaned_data.get("old_password")
-        new_password = cleaned_data.get("new_password")
-        confirm_password = cleaned_data.get("confirm_password")
-
-        if new_password and new_password != confirm_password:
-            self.add_error('confirm_password', "New password and confirm password do not match.")
-        self.user = authenticate(phone=self.request.phone, password=old_password)
-        if not self.user:
-            self.add_error('old_password', "Old password is incorrect.")
-
-        return cleaned_data
-
-    def save(self):
-        user = self.user.save(commit=False)
-        user.set_password(self.cleaned_data['new_password'])
-        user.save()
-        return user
-
-
 class UpdateModelForm(ModelForm):
     region = ModelChoiceField(queryset=Region.objects.all(), required=False)
     district = ModelChoiceField(queryset=District.objects.all(), required=False)
@@ -83,3 +53,8 @@ class UpdateModelForm(ModelForm):
         model = User
         fields = 'first_name', 'last_name', 'region', 'district', 'about'
 
+
+class ChangePasswordForm(Form):
+    old_password = CharField(widget=PasswordInput())
+    new_password = CharField(widget=PasswordInput())
+    confirm_password = CharField(widget=PasswordInput())

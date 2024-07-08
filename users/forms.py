@@ -83,3 +83,8 @@ class UpdateModelForm(ModelForm):
         model = User
         fields = 'first_name', 'last_name', 'region', 'district', 'about'
 
+
+class ChangePasswordForm(Form):
+    old_password = CharField(widget=PasswordInput())
+    new_password = CharField(widget=PasswordInput())
+    confirm_password = CharField(widget=PasswordInput())

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-28 18:46+0500\n"
+"POT-Creation-Date: 2024-07-07 12:42+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,16 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
-
-#: apps/admin.py:174
+#: apps/admin.py:174 apps/proxy.py:25
 msgid "New Orders"
 msgstr ""
 
-#: apps/admin.py:175
+#: apps/admin.py:175 apps/proxy.py:34
 msgid "Ready Orders"
 msgstr ""
 
-#: apps/admin.py:176
+#: apps/admin.py:176 apps/proxy.py:43
 msgid "Delivery Orders"
 msgstr ""
 
@@ -48,7 +47,7 @@ msgstr ""
 msgid "Archived Orders"
 msgstr ""
 
-#: apps/admin.py:181
+#: apps/admin.py:181 apps/proxy.py:16
 msgid "History Orders"
 msgstr ""
 
@@ -96,101 +95,88 @@ msgstr ""
 msgid "Site Settings"
 msgstr ""
 
-#: apps/proxy.py:51
-msgid "Delivered Order"
+#: templates/apps/parts/header.html:27
+msgid "Search"
 msgstr ""
 
-#: apps/proxy.py:60
-msgid "Cancelled Order"
+#: templates/apps/parts/header.html:75
+msgid "Notifications"
 msgstr ""
 
-#: apps/proxy.py:69
-msgid "Archived Order"
+#: templates/apps/parts/header.html:81
+msgid "NEW"
 msgstr ""
 
-#: apps/proxy.py:78
-msgid "Missed Call Order"
+#: templates/apps/parts/header.html:107
+msgid "For operators"
 msgstr ""
 
-#: apps/proxy.py:87
-msgid "Process Transaction"
+#: templates/apps/parts/header.html:111
+msgid "Profile"
 msgstr ""
 
-#: apps/proxy.py:96
-msgid "Paid Transaction"
+#: templates/apps/parts/header.html:112
+msgid "Opinions"
 msgstr ""
 
-#: apps/proxy.py:105
-msgid "Cancelled Transaction"
+#: templates/apps/parts/header.html:113
+msgid "Settings"
 msgstr ""
 
-#: apps/proxy.py:114
-msgid "Operator Transaction"
+#: templates/apps/parts/header.html:120
+msgid "Sign Up"
 msgstr ""
 
-#: apps/proxy.py:123
-msgid "Client Transaction"
+#: templates/apps/parts/header.html:121
+msgid "Sign In"
 msgstr ""
 
-#: root/settings.py:99
-msgid "Uzbek"
-msgstr ""
-
-#: root/settings.py:100
-msgid "English"
-msgstr ""
-
-#: root/settings.py:101
-msgid "Russian"
-msgstr ""
-
-#: templates/admin/index.html:7 templates/admin/index.html:12
-msgid "Dashboard"
-msgstr ""
-
-#: templates/admin/index.html:11
-msgid "Home"
-msgstr ""
-
-#: templates/admin/index.html:94
-msgid "Add"
-msgstr ""
-
-#: templates/admin/index.html:98
-msgid "View"
-msgstr ""
-
-#: templates/admin/index.html:100
-msgid "Go"
-msgstr ""
-
-#: templates/admin/index.html:100
-msgid "Change"
-msgstr ""
-
-#: templates/admin/index.html:125
-msgid "Recent actions"
-msgstr ""
-
-#: templates/admin/index.html:129
-msgid "None available"
-msgstr ""
-
-#: templates/admin/index.html:143
-#, python-format
-msgid "%(timesince)s ago"
-msgstr ""
-
-#: users/admin.py:18
+#: users/admin.py:23 users/admin.py:88
 msgid "Personal info"
 msgstr ""
 
-#: users/admin.py:19
+#: users/admin.py:24 users/admin.py:89
 msgid "Important dates"
 msgstr ""
 
-#: users/admin.py:20
+#: users/admin.py:25 users/admin.py:90
 msgid "My photo"
+msgstr ""
+
+#: users/models.py:19
+msgid "Regions"
+msgstr ""
+
+#: users/models.py:36
+msgid "Districts"
+msgstr ""
+
+#: users/models.py:86
+msgid "operator ishga kelish vaqati"
+msgstr ""
+
+#: users/models.py:87
+msgid "operator ishdan ketish vaqti"
+msgstr ""
+
+#: users/proxy.py:15
+msgid "Operators"
+msgstr ""
+
+#: users/proxy.py:24
+msgid "Clients"
+msgstr ""
+
+#: users/proxy.py:33
+msgid "Managers"
+msgstr ""
+
+#: users/proxy.py:42
+msgid "Admins"
+msgstr ""
+
+#: users/proxy.py:51
+msgid "Couriers"
 msgstr ""
 
 #: users/proxy.py:57

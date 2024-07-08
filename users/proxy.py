@@ -1,5 +1,5 @@
-from django.db.models import OneToOneField, CASCADE
 from django.utils.translation import gettext_lazy as _
+
 from users.managers import (AdminProxyManager, ClientProxyManager,
                             CourierProxyManager, ManagerProxyManager,
                             OperatorProxyManager)
@@ -12,7 +12,7 @@ class OperatorProxyModel(User):
     class Meta:
         proxy = True
         verbose_name = 'Operator'
-        verbose_name_plural = 'Operators'
+        verbose_name_plural = _('Operators')
 
 
 class ClientProxyModel(User):
@@ -21,7 +21,7 @@ class ClientProxyModel(User):
     class Meta:
         proxy = True
         verbose_name = 'Client'
-        verbose_name_plural = 'Clients'
+        verbose_name_plural = _('Clients')
 
 
 class ManagerProxyModel(User):
@@ -30,7 +30,7 @@ class ManagerProxyModel(User):
     class Meta:
         proxy = True
         verbose_name = 'Manager'
-        verbose_name_plural = 'Managers'
+        verbose_name_plural = _('Managers')
 
 
 class AdminProxyModel(User):
@@ -39,7 +39,7 @@ class AdminProxyModel(User):
     class Meta:
         proxy = True
         verbose_name = 'Admin'
-        verbose_name_plural = 'Admins'
+        verbose_name_plural = _('Admins')
 
 
 class CourierProxyModel(User):
@@ -48,7 +48,7 @@ class CourierProxyModel(User):
     class Meta:
         proxy = True
         verbose_name = 'Courier'
-        verbose_name_plural = 'Couriers'
+        verbose_name_plural = _('Couriers')
 
 
 class ReportProxy(User):

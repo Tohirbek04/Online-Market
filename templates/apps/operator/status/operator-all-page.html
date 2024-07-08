@@ -44,7 +44,7 @@
             {% for order in orders %}
                 <div class="card border-dark mt-5">
                     <div class="card-body">
-                        <h2 class="card-title">{{ order.product__title }}</h2>
+                        <h2 class="card-title">{{ order.product.title }}</h2>
                         <ul class="text-muted">
                             <li class="">ID: {{ order.pk }}</li>
                             <li class="">Operator ID: {{ order.operator_id }}</li>

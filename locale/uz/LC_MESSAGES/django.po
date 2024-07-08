@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-28 18:46+0500\n"
+"POT-Creation-Date: 2024-07-07 12:42+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,16 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-#: apps/admin.py:174
+#: apps/admin.py:174 apps/proxy.py:25
 msgid "New Orders"
 msgstr ""
 
-#: apps/admin.py:175
+#: apps/admin.py:175 apps/proxy.py:34
 msgid "Ready Orders"
 msgstr ""
 
-#: apps/admin.py:176
+#: apps/admin.py:176 apps/proxy.py:43
 msgid "Delivery Orders"
 msgstr ""
 
@@ -39,16 +38,14 @@ msgid "Cancelled Orders"
 msgstr ""
 
 #: apps/admin.py:179 apps/proxy.py:79
-#, fuzzy
-#| msgid "Order Cancelled"
 msgid "Missed Call Orders"
-msgstr "Bekor qilingan Buyurtmalar"
+msgstr ""
 
 #: apps/admin.py:180 apps/proxy.py:70
 msgid "Archived Orders"
 msgstr ""
 
-#: apps/admin.py:181
+#: apps/admin.py:181 apps/proxy.py:16
 msgid "History Orders"
 msgstr ""
 
@@ -74,7 +71,7 @@ msgstr ""
 
 #: apps/admin.py:187
 msgid "Streams"
-msgstr "Oqimlar"
+msgstr ""
 
 #: apps/admin.py:188
 msgid "Likes"
@@ -90,118 +87,100 @@ msgstr ""
 
 #: apps/admin.py:191
 msgid "Competitions"
-msgstr "Konkurs"
+msgstr ""
 
 #: apps/admin.py:192
 msgid "Site Settings"
 msgstr ""
 
-#: apps/proxy.py:51
-msgid "Delivered Order"
+#: templates/apps/parts/header.html:27
+msgid "Search"
+msgstr "Qidiruv"
+
+#: templates/apps/parts/header.html:75
+msgid "Notifications"
+msgstr "Bildirishnomalar"
+
+#: templates/apps/parts/header.html:81
+msgid "NEW"
+msgstr "YANGI"
+
+#: templates/apps/parts/header.html:107
+msgid "For operators"
+msgstr "Operatorlar uchun"
+
+#: templates/apps/parts/header.html:111
+msgid "Profile"
+msgstr "Profil"
+
+#: templates/apps/parts/header.html:112
+msgid "Opinions"
 msgstr ""
 
-#: apps/proxy.py:60
-#, fuzzy
-#| msgid "Order Cancelled"
-msgid "Cancelled Order"
-msgstr "Bekor qilingan Buyurtma"
+#: templates/apps/parts/header.html:113
+msgid "Settings"
+msgstr "Sozlamalar"
 
-#: apps/proxy.py:69
-msgid "Archived Order"
-msgstr ""
+#: templates/apps/parts/header.html:120
+msgid "Sign Up"
+msgstr "Ruyhatdan o'tish"
 
-#: apps/proxy.py:78
-msgid "Missed Call Order"
-msgstr ""
+#: templates/apps/parts/header.html:121
+msgid "Sign In"
+msgstr "Kirish"
 
-#: apps/proxy.py:87
-msgid "Process Transaction"
-msgstr "Jarayondagi Utkazmalar"
-
-#: apps/proxy.py:96
-msgid "Paid Transaction"
-msgstr "To'langan Utkazmalar"
-
-#: apps/proxy.py:105
-msgid "Cancelled Transaction"
-msgstr "Bekor qilingan Utkazmalar"
-
-#: apps/proxy.py:114
-msgid "Operator Transaction"
-msgstr "Operator Pul utkazmalari"
-
-#: apps/proxy.py:123
-msgid "Client Transaction"
-msgstr "Klint Pul utkazmalari"
-
-#: root/settings.py:99
-msgid "Uzbek"
-msgstr "Uzbek"
-
-#: root/settings.py:100
-msgid "English"
-msgstr "Engilizcha"
-
-#: root/settings.py:101
-msgid "Russian"
-msgstr "Ruscha"
-
-#: templates/admin/index.html:7 templates/admin/index.html:12
-msgid "Dashboard"
-msgstr "Bosh Sahifa"
-
-#: templates/admin/index.html:11
-msgid "Home"
-msgstr "Uy"
-
-#: templates/admin/index.html:94
-msgid "Add"
-msgstr "Qo'shish"
-
-#: templates/admin/index.html:98
-msgid "View"
-msgstr ""
-
-#: templates/admin/index.html:100
-msgid "Go"
-msgstr ""
-
-#: templates/admin/index.html:100
-msgid "Change"
-msgstr "O'zgartirish"
-
-#: templates/admin/index.html:125
-msgid "Recent actions"
-msgstr ""
-
-#: templates/admin/index.html:129
-msgid "None available"
-msgstr ""
-
-#: templates/admin/index.html:143
-#, python-format
-msgid "%(timesince)s ago"
-msgstr ""
-
-#: users/admin.py:18
+#: users/admin.py:23 users/admin.py:88
 msgid "Personal info"
-msgstr "Shaxsiy malumotlar"
+msgstr ""
 
-#: users/admin.py:19
+#: users/admin.py:24 users/admin.py:89
 msgid "Important dates"
-msgstr "Muhim sanalar"
+msgstr ""
 
-#: users/admin.py:20
+#: users/admin.py:25 users/admin.py:90
 msgid "My photo"
-msgstr "Mening Rasmim"
+msgstr ""
+
+#: users/models.py:19
+msgid "Regions"
+msgstr ""
+
+#: users/models.py:36
+msgid "Districts"
+msgstr ""
+
+#: users/models.py:86
+msgid "operator ishga kelish vaqati"
+msgstr ""
+
+#: users/models.py:87
+msgid "operator ishdan ketish vaqti"
+msgstr ""
+
+#: users/proxy.py:15
+msgid "Operators"
+msgstr ""
+
+#: users/proxy.py:24
+msgid "Clients"
+msgstr ""
+
+#: users/proxy.py:33
+msgid "Managers"
+msgstr ""
+
+#: users/proxy.py:42
+msgid "Admins"
+msgstr ""
+
+#: users/proxy.py:51
+msgid "Couriers"
+msgstr ""
 
 #: users/proxy.py:57
 msgid "User balance report"
-msgstr "Userlarning Balans Hisoboti"
+msgstr ""
 
 #: users/proxy.py:58
 msgid "User balance reports"
-msgstr "Userlarning Balans Hisobotlari"
-
-#~ msgid "Order Archived"
-#~ msgstr "Arxivlangan buyurtma"
+msgstr ""

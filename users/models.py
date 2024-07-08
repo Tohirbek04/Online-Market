@@ -4,6 +4,7 @@ from django.db.models import (CASCADE, BigIntegerField, CharField, ForeignKey,
                               ImageField, IntegerField, Model, SlugField, Sum,
                               TextChoices, TimeField, OneToOneField)
 from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
 
 from users.managers import UserModelManager
@@ -12,6 +13,10 @@ from users.managers import UserModelManager
 class Region(Model):
     name = CharField(max_length=30)
     slug = SlugField(max_length=30, editable=False)
+
+    class Meta:
+        verbose_name = 'Region'
+        verbose_name_plural = _("Regions")
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -25,6 +30,10 @@ class District(Model):
     name = CharField(max_length=30)
     slug = SlugField(max_length=30, editable=False)
     region = ForeignKey('users.Region', on_delete=CASCADE)
+
+    class Meta:
+        verbose_name = 'District'
+        verbose_name_plural = _('Districts')
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -74,6 +83,6 @@ class User(AbstractUser):
 
 class Account(Model):
     operator = OneToOneField('users.User', CASCADE, limit_choices_to={'type': User.Type.OPERATOR})
-    from_working_time = TimeField('operator ishga kelish vaqati')
-    to_working_time = TimeField('operator ishdan ketish vaqti')
+    from_working_time = TimeField(_('operator ishga kelish vaqati'))
+    to_working_time = TimeField(_('operator ishdan ketish vaqti'))
     passport = CharField(max_length=9)

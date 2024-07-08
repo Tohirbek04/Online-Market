@@ -1,5 +1,7 @@
 from django.db.models import Manager
 
+from users.models import User
+
 
 class NewOrderManager(Manager):
     def get_queryset(self):
@@ -53,10 +55,9 @@ class TransactionPaidManager(Manager):
 
 class OperatorTransactionManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(user__type='operator')
+        return super().get_queryset().filter(user__type=User.Type.OPERATOR)
 
 
 class ClientTransactionManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(user__type='client')
-
+        return super().get_queryset().filter(user__type=User.Type.CLIENT)

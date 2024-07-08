@@ -216,24 +216,14 @@
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
-                    <div class="col-auto mr-auto">
-                        <h2>Kuryerlar ro'yhati</h2>
-                    </div>
+                    <div class="col-auto mr-auto"><h2>Kuryerlar ro'yhati</h2></div>
                     <div class="col-auto">
                         <form method="GET">
-                            <div><p>
-                                <input type="text" name="name" id="id_name">
-                            </p></div>
+                            <div><p><input type="text" name="name" id="id_name"></p></div>
                         </form>
                     </div>
                 </div>
             </div>
-            <input type="text" hidden="" name="order_list" value="1752920">
-            <input type="text" hidden="" name="order_list" value="1752919">
-            <input type="text" hidden="" name="order_list" value="1752920">
-            <input type="text" hidden="" name="order_list" value="1752919">
-            <input type="text" hidden="" name="order_list" value="1752920">
-            <input type="text" hidden="" name="order_list" value="1752919">
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
@@ -244,12 +234,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                <form method="POST" action="{% url 'currier' %}"></form>
+                <form method="POST" action=""></form>
                 {% csrf_token %}
                 {% for courier in couriers %}
                     <tr>
                         <td>{{ courier.first_name }} {{ courier.last_name }}</td>
                         <td>{{ courier.phone_number }}</td>
+                        <td>{{ courier.district.region.name }}</td>
                         <td>
                             <i class="material-icons" data-toggle="tooltip" title="Biriktirish">
                                 <input class="btn btn-primary" type="submit" value="">

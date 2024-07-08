@@ -41,17 +41,17 @@
                 <br>
                 <input class="btn btn-primary" type="submit" value="Saqlash">
             </form>
-            <form method="POST" action="">
+            <form method="POST" action="{% url 'courier_page' %}">
                 {% csrf_token %}
-                <input class="btn btn-primary" type="submit" value="Kuryer" style="margin-top: 10px;">
+                <input class="btn btn-primary" type="submit" style="margin-top: 10px;">
                 <input id="select" type="checkbox" onClick="toggle(this)"/> Toggle All<br/>
                 {% for order in orders %}
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="orders" value="" id="order-1">
+                        <input class="form-check-input" type="checkbox" name="orders" value="{{ order.pk }}" 
+                               id="order-{{ order.pk }}">
                         <div class="card border-dark mt-5">
                                 <span style="position: absolute; right: 0px; border: 1px solid chartreuse; background: chartreuse; 
-                                    padding: 15px; font-size: 26px; font-weight: 700;"> {{ order.operator_id }}
-                                </span>
+                                    padding: 15px; font-size: 26px; font-weight: 700;"> {{ order.operator_id }}</span>
                             <div class="card-body">
                                 <h2 class="card-title">{{ order.product.title }}</h2>
                                 <ul class="text-muted">
@@ -64,8 +64,9 @@
                                     </li>
                                     <li class="">Soni: {{ order.quantity }}</li>
                                     <li class="">Komment: {{ order.description }}</li>
-                                    <li class="">Manzil: {{ order.district.region.name }} viloyati 
-                                        {{ order.district.name }} ga</li>
+                                    <li class="">Manzil: {{ order.district.region.name }} viloyati
+                                        {{ order.district.name }} ga
+                                    </li>
                                     <li class="">Yetkazilish vaqti: {{ order.send_order_date }}</li>
                                     <li class="">Oqim ID: {{ order.stream.pk|default_if_none:'mavjud emas' }}</li>
                                     <li class="" style="color: blue">Status: {{ order.get_status_display }}</li>
@@ -90,7 +91,7 @@
             }
         }
     </script>
-
+    
     <script>
         $(function () {
             $('select').multipleSelect({

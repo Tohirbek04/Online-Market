@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+
 load_dotenv()
 from django.utils.translation import gettext_lazy as _
 
@@ -77,7 +78,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -99,36 +99,18 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
+TIME_ZONE = 'Asia/Tashkent'
 LANGUAGE_CODE = 'uz'
 
-LANGUAGES = (
-    ('uz', _('Uzbek')),
-    ('en', _('English')),
-    ('ru', _('Russian')),
-)
-
-TIME_ZONE = 'Asia/Tashkent'
+LANGUAGES = [
+    ('uz', 'Uzbek'),
+    ('en', 'English'),
+    ('ru', 'Russian'),
+]
 
 LOCAL_PATHS = [
     os.path.join(BASE_DIR / 'locale'),
 ]
-
-USE_I18N = True
-USE_L10N = True
-
-USE_TZ = True
-
-PARLER_LANGUAGES = {
-    None: (
-        {'code': 'uz'},
-        {'code': 'en'},
-        {'code': 'ru'},
-    ),
-    'default': {
-        'fallbacks': ['uz'],
-        'hide_untranslated': False,
-    }
-}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

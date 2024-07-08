@@ -2,6 +2,7 @@ from django.db.models import (CASCADE, SET_NULL, BooleanField, CharField,
                               DateTimeField, ForeignKey, ImageField,
                               IntegerField, Model, SlugField, TextChoices, DateField, CheckConstraint, Q, F)
 from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
 
 from users.models import User
@@ -14,7 +15,7 @@ class Category(Model):
 
     class Meta:
         verbose_name = 'Category'
-        verbose_name_plural = 'Categories'
+        verbose_name_plural = _('Categories')
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -40,6 +41,8 @@ class Product(Model):
         constraints = [
             CheckConstraint(check=Q(price__gt=F('extra_balance')), name='price_gt_extra_balance'),
         ]
+        verbose_name = 'Product'
+        verbose_name_plural = _('Products')
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -76,7 +79,6 @@ class Order(Model):
     stream = ForeignKey('apps.Stream', SET_NULL, null=True, blank=True, related_name='orders')
     courier = ForeignKey('users.User', SET_NULL, null=True, blank=True, related_name='courier',
                          limit_choices_to={'type': User.Type.COURIER})
-    region = ForeignKey('users.Region', SET_NULL, null=True, blank=True)
     district = ForeignKey('users.District', SET_NULL, null=True, blank=True)
     operator = ForeignKey('users.User', SET_NULL, null=True, blank=True, related_name='operator',
                           limit_choices_to={'type': User.Type.OPERATOR})
@@ -85,6 +87,8 @@ class Order(Model):
 
     class Meta:
         ordering = ['-created_at']
+        verbose_name = 'Order'
+        verbose_name_plural = _('Orders')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         site = SiteSetting.objects.first()
@@ -107,11 +111,8 @@ class Order(Model):
     def current_price(self):
         if self.stream and self.stream.discount:
             return self.product.price - hasattr(self.stream, 'discount') * self.stream.discount
-
-    @property
-    def current_total_price(self):
-        if self.stream.discount:
-            return self.quantity * (self.product.price - hasattr(self.stream, 'discount') * self.stream.discount)
+        else:
+            return self.product.price
 
     def __str__(self):
         return self.name
@@ -124,6 +125,7 @@ class LikeModel(Model):
 
     class Meta:
         verbose_name = 'Like'
+        verbose_name_plural = _('Likes')
 
 
 class Stream(Model):
@@ -132,6 +134,10 @@ class Stream(Model):
     owner = ForeignKey('users.User', CASCADE)
     product = ForeignKey('apps.Product', CASCADE, related_name='streams')
     views_count = IntegerField(db_default=0)
+
+    class Meta:
+        verbose_name = 'Stream'
+        verbose_name_plural = _('Streams')
 
 
 class Competition(Model):
@@ -143,6 +149,10 @@ class Competition(Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Competition'
+        verbose_name_plural = _('Competitions')
+
 
 class SiteSetting(Model):
     operator_sum = IntegerField(verbose_name='operator uchun beriladigan pul')
@@ -152,6 +162,7 @@ class SiteSetting(Model):
 
     class Meta:
         verbose_name = 'Site Setting'
+        verbose_name_plural = _('Site Settings')
 
 
 class Transaction(Model):
@@ -168,6 +179,10 @@ class Transaction(Model):
     update_at = DateTimeField(auto_now=True)
     text = CKEditor5Field('Text', config_name='extends', null=True, blank=True)
     chek = ImageField(upload_to='apps/transaction', null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Transaction'
+        verbose_name_plural = _('Transactions')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.pk and self.status == self.Status.PROCESS:

@@ -43,8 +43,39 @@
         .dropdown:hover .dropdown-content {
             display: block;
         }
-        
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .pagination .step-links {
+            display: flex;
+            gap: 5px;
+        }
+
+        .pagination a,
+        .pagination span {
+            display: inline-block;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .pagination span {
+            background-color: #f8f9fa;
+            border-color: #6c757d;
+        }
 
     </style>
     <div class="col-md-10" style="margin-left: 16%;">
@@ -118,6 +149,26 @@
                     </div>
                 {% endfor %}
             </form>
+        </div>
+        <div class="pagination">
+            <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="btn btn-sm btn-falcon-default text-primary me-2" href="?page=1">&laquo; 1</a>
+                <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                   href="?page={{ page_obj.previous_page_number }}">oldingisi</a>
+            {% endif %}
+
+                <span class="btn btn-sm btn-falcon-default text-primary me-2">
+                Page {{ page_obj.number }}
+            </span>
+
+                {% if page_obj.has_next %}
+                    <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                       href="?page={{ page_obj.next_page_number }}">keyingisi</a>
+                    <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                       href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }} &raquo;</a>
+                {% endif %}
+        </span>
         </div>
     </div>
 {% endblock %}

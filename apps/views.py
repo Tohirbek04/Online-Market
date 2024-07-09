@@ -372,6 +372,7 @@ class RequestListView(ListView):
 class BaseOrderListView(OperatorRequiredMixin, ListView):
     context_object_name = 'orders'
     queryset = Order.objects.all()
+    paginate_by = 2
 
     def get_queryset(self):
         qs = super().get_queryset().filter(status=self.status)

@@ -188,8 +188,10 @@ class PasswordUpdateFormView(FormView):
                 messages.success(self.request, 'password change ✔')
             else:
                 messages.error(self.request, 'password no change new password or confirm password invalid ❗')
+                raise ValidationError('password no change new password or confirm password invalid ❗')
         else:
             messages.error(self.request, 'You entered your password invalid ❗')
+            raise ValidationError('You entered your password invalid ❗')
 
         update_session_auth_hash(self.request, user)
         return super().form_valid(form)

@@ -1,0 +1,266 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Kuryer listi</title>
+    <link rel="shortcut icon" href="{% static 'apps/icons8-market-square-16.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'apps/assets/owlcarousel/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'apps/assets/owlcarousel/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'apps/assets/css/style.bundle.css' %}">
+    <link rel="stylesheet" href="{% static 'apps/assets/css/custom.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/multiple-select@1.5.2/dist/multiple-select.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,400i,500,500i,600,600i,700,700i,800,800i"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'apps/assets/css/framework.extras.css' %}">
+    <link rel="stylesheet" href="{% static 'apps/css/custom.css' %}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50; /* Night-themed background */
+            color: #ecf0f1; /* Bright text color */
+        }
+
+        .container-xl {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #34495e; /* Darker background for contrast */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table-wrapper {
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px; /* Slightly larger font */
+            color: #ecf0f1; /* Bright text color */
+        }
+
+        .order-table th, .order-table td {
+            border: 1px solid #7f8c8d; /* Light border color */
+            padding: 10px; /* More padding for better readability */
+            text-align: left;
+        }
+
+        .order-table th {
+            background-color: #2980b9; /* Bright background for table headers */
+        }
+
+        .btn {
+            padding: 12px 25px; /* More padding */
+            background-color: #e74c3c; /* Bright red button */
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            border-radius: 5px; /* Rounded corners */
+            font-size: 16px; /* Larger font size */
+        }
+
+        .btn:hover {
+            background-color: #c0392b; /* Darker red on hover */
+        }
+
+        .d-flex {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .mt-3 {
+            margin-top: 20px;
+        }
+
+        .mb-3 {
+            margin-bottom: 20px;
+        }
+
+        .inline-table {
+            width: 49%;
+            display: inline-block;
+            margin: 2px;
+            font-size: 14px;
+            vertical-align: top;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Printing styles */
+        @media print {
+            body {
+                background-color: #fff;
+                color: #000;
+            }
+
+            .container-xl {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .order-table th, .order-table td {
+                border: 1px solid #000;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<div class="container-xl" id="printarea">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <table class="order-table" id="frame">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Mijoz</th>
+                    <th>Viloyat</th>
+                    <th>Manzil</th>
+                    <th>Mahsulot</th>
+                    <th>Izoh</th>
+                    <th>Narxi</th>
+                    <th>QR-KOD</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.pk }}</td>
+                        <td>{{ order.name }} <br>+998{{ order.phone_number }}</td>
+                        <td>{{ order.district.region.name|default:'kiritilmagan' }}</td>
+                        <td>{{ order.district.name|default:'kiritilmagan' }}</td>
+                        <td>{{ order.product.name }} <b>{{ order.quantity }} ta</b></td>
+                        <td>{{ order.description }}</td>
+                        <td>{{ order.product.price|intcomma }} so'm
+                            chegirma {{ order.stream.discount|default:'yuq' }}</td>
+                        <td>
+                            <img src="/media/qr_code/2024/7/9/13a018fd-179e-4e54-82ae-6d8e3788f2f0_GUnwoXU.png"
+                                 alt="Bolalar uchun alifbo" width="70px">
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container-xl mt-3 mb-3">
+    <div class="d-flex">
+        <a href="{% url 'courier_page' %}" class="btn">Orqaga</a>
+        <a href="#" class="btn" onclick="printFunc()">Print</a>
+        <form method="post" action="{% url 'status_to_delivery' %}">
+            {% csrf_token %}
+            <input hidden="hidden" name="orders" value="{{ orders_id }}">
+            <input type="submit" value="yetkazilmoqda" class="btn">
+        </form>
+    </div>
+</div>
+
+<div class="container-xl">
+    <div class="row" id="printarea1">
+        <div class="inline-table">
+            <div class="table-responsive">
+                {% for order in orders %}
+                    <div class="table-wrapper">
+                        <table class="order-table">
+                            <tbody>
+                            <tr>
+                                <td>№</td>
+                                <td style="width: 39%;">id {{ order.pk }}</td>
+                            </tr>
+                            <tr>
+                                <td>Mijoz</td>
+                                <td>{{ order.name }}<br>+998{{ order.phone_number }}</td>
+                            </tr>
+                            <tr>
+                                <td>Manzil</td>
+                                <td>{{ order.district.name|default:'kiritilmagan' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Mahsulot</td>
+                                <td>{{ order.product.title }} {{ order.quantity }} ta</td>
+                            </tr>
+                            <tr>
+                                <td>Izoh</td>
+                                <td>{{ order.description }}</td>
+                            </tr>
+                            <tr>
+                                <td>Narxi</td>
+                                <td>{{ order.product.price|intcomma }} chigirma {{ order.stream.discount|default:'yuq' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Operator<br>Call-center</td>
+                                <td>#{{ order.operator_id }} operator ismi {{ order.operator.first_name }} <br>
+                                    +998{{ order.operator.phone }}</td>
+                            </tr>
+                            <tr>
+                                <td>Courier<br>Call</td>
+                                <td>#{{ order.courier_id }} curer ismi {{ order.courier.first_name }} <br>
+                                    +998{{ order.courier.phone }}</td>
+                            </tr>
+                            <tr>
+                                <td>Yetkazib berish vaqti</td>
+                                <td>{{ order.send_order_date|default_if_none:'' }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-xl mt-3 mb-3">
+    <a href="#" class="btn" onclick="printFunc1()">Print</a>
+</div>
+
+<script>
+    function printFunc() {
+        var divToPrint = document.getElementById('printarea');
+        var htmlToPrint = '<style type="text/css">' +
+            'table { border: 1px solid black; border-collapse: collapse; font-size: 11px; }' +
+            '.order-table td { border: 1px solid black; }' +
+            '</style>';
+        htmlToPrint += divToPrint.outerHTML;
+        var newWin = window.open("");
+        newWin.document.write(htmlToPrint);
+        newWin.print();
+        newWin.close();
+    }
+
+    function printFunc1() {
+        var divToPrint = document.getElementById('printarea1');
+        var htmlToPrint = '<style type="text/css">' +
+            'table { border: 1px solid black; border-collapse: collapse; font-size: 11px; }' +
+            '.order-table td { border: 1px solid black; }' +
+            '</style>';
+        htmlToPrint += divToPrint.outerHTML;
+        var newWin = window.open("");
+        newWin.document.write(htmlToPrint);
+        newWin.print();
+        newWin.close();
+    }
+</script>
+</body>
+</html>

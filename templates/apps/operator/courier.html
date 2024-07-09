@@ -1,9 +1,8 @@
-
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Kuryer listi</title>
+    <title>Kuryerlar ro'yxati</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -234,17 +233,22 @@
                 </tr>
                 </thead>
                 <tbody>
-                <form method="POST" action=""></form>
+                <form method="POST"></form>
                 {% csrf_token %}
                 {% for courier in couriers %}
                     <tr>
                         <td>{{ courier.first_name }} {{ courier.last_name }}</td>
-                        <td>{{ courier.phone_number }}</td>
+                        <td>+998{{ courier.phone }}</td>
                         <td>{{ courier.district.region.name }}</td>
                         <td>
-                            <i class="material-icons" data-toggle="tooltip" title="Biriktirish">
-                                <input class="btn btn-primary" type="submit" value="">
-                            </i>
+                            <form method="POST" action="{% url 'print_page' %}">
+                                {% csrf_token %}
+                                <input hidden="hidden" name="orders" value="{{ orders_id }}">
+                                <input type="hidden" name="courier_id" value="{{ courier.id }}">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="material-icons" data-toggle="tooltip" title="Biriktirish"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 {% endfor %}

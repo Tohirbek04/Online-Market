@@ -1,15 +1,16 @@
+import ast
 from datetime import timedelta
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q, Sum, OuterRef, Exists
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
 from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
 
 from apps.forms import (OrderCreateModelForm, StreamCreateModelForm,
-                        TransactionModelForm, CourierForm)
+                        TransactionModelForm)
 from apps.mixins import OperatorRequiredMixin
 from apps.models import (Category, Competition, LikeModel, Order, Product,
                          SiteSetting, Stream, Transaction)
@@ -372,6 +373,7 @@ class RequestListView(ListView):
 class BaseOrderListView(OperatorRequiredMixin, ListView):
     context_object_name = 'orders'
     queryset = Order.objects.all()
+    paginate_by = 2
 
     def get_queryset(self):
         qs = super().get_queryset().filter(status=self.status)
@@ -463,10 +465,35 @@ class OrderNewToReadyUpdateView(UpdateView):
     success_url = reverse_lazy('new_orders')
 
 
-class CourierPageListView(FormView):
-    form_class = CourierForm
-    success_url = reverse_lazy('product_list')
+class CourierPageView(View):
 
-    def form_valid(self, form):
-        orders = self.request.POST.get('orders')
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        context = {
+            'couriers': User.objects.filter(type=User.Type.COURIER),
+            'orders_id': request.POST.getlist('orders')
+        }
+        return render(request, 'apps/operator/courier.html', context)
+
+
+class PrintPageView(View):
+    def post(self, request, *args, **kwargs):
+        courier_id = self.request.POST.get('courier_id')
+        orders_list = ast.literal_eval(request.POST.get('orders'))
+        for order in Order.objects.filter(pk__in=orders_list):
+            order.courier_id = courier_id
+            order.save()
+        context = {'orders': Order.objects.filter(pk__in=orders_list).select_related('product', 'stream', 'courier',
+                                                                                     'operator', 'district'),
+                   'orders_id': orders_list}
+        return render(request, 'apps/operator/print.html', context)
+
+
+class StatusToDeliveryView(View):
+    def post(self, request, *args, **kwargs):
+        orders_list = ast.literal_eval(request.POST.get('orders'))
+        for order in Order.objects.filter(pk__in=orders_list):
+            order.status = Order.Status.DELIVERY
+            order.save()
+        return redirect('new_orders')
+
+

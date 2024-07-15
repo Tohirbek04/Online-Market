@@ -11,7 +11,7 @@ from apps.views import (ArchivedOrderListView, CancelledOrderListView,
                         RequestListView, StatisticsView, StreamCreateListView,
                         TopProductListView, TransactionDetailView, OrderNewToReadyUpdateView,
                         AllOrderListView, CourierPageView, OrderChangeDetailView, DeliveredOrderListView, PrintPageView,
-                        StatusToDeliveryView)
+                        StatusToDeliveryView, ForbiddenStatusTemplateView)
 
 urlpatterns = [
 
@@ -57,4 +57,5 @@ urlpatterns = [
     path('operator/courier/page', CourierPageView.as_view(), name='courier_page'),
     path('operator/print/page', PrintPageView.as_view(), name='print_page'),
     path('operator/status/to/delivery', StatusToDeliveryView.as_view(), name='status_to_delivery'),
+    path('status/403', ForbiddenStatusTemplateView.as_view(), name='status_403'),
 ]

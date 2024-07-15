@@ -70,7 +70,7 @@ class User(AbstractUser):
 
     @property
     def is_operator(self):
-        return self.type == self.Type.OPERATOR
+            return self.type == self.Type.OPERATOR
 
     @property
     def get_paid_balance(self):

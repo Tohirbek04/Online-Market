@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .error-icon {
+            width: 95%;
+        }
+        .error-message {
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+        .error-code {
+            font-size: 4rem;
+            color: #FF0000;
+            margin: 10px 0;
+        }
+        .back-button {
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+        .back-button:hover {
+            background-color: #d00000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{% static 'apps/images/Error-403-Forbidden-Error.png' %}" alt="Forbidden 403" class="error-icon">
+        <a href="{% url 'product_list' %}" class="back-button">Back to Home Page</a>
+    </div>
+</body>
+</html>

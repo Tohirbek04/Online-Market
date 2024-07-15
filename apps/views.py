@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
-from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView, TemplateView
 
 from apps.forms import (OrderCreateModelForm, StreamCreateModelForm,
                         TransactionModelForm)
@@ -497,3 +497,5 @@ class StatusToDeliveryView(View):
         return redirect('new_orders')
 
 
+class ForbiddenStatusTemplateView(TemplateView):
+    template_name = 'status/403.html'
